@@ -1,79 +1,109 @@
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-//buat variabel prisma
+// Buat instance Prisma
 const prisma = new PrismaClient();
 
-// Fungsi service "GET" (ambil semua data petani)
+// Service GET: Ambil semua data petani
 export const GET = async () => {
-    const data = await prisma.petani.findMany({});
+  try {
+    const data = await prisma.petani.findMany();
 
     if (data.length === 0) {
-        return NextResponse.json({
-            meta_data: {
-                error: 1,
-                message: "Data User Tidak Ditemukan",
-                status: 404
-            },
-        }, {
-            status: 404
-        });
+      return NextResponse.json(
+        {
+          meta_data: {
+            error: 1,
+            message: "Data Petani Tidak Ditemukan",
+            status: 404,
+          },
+        },
+        { status: 404 }
+      );
     }
 
-    return NextResponse.json({
+    return NextResponse.json(
+      {
         meta_data: {
-            error: 0,
-            message: null,
-            status: 200
+          error: 0,
+          message: null,
+          status: 200,
         },
-        data_user: data
-    }, {
-        status: 200
-    });
+        data_user: data,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        meta_data: {
+          error: 1,
+          message: "Terjadi kesalahan saat mengambil data",
+          status: 500,
+        },
+      },
+      { status: 500 }
+    );
+  }
 };
 
-// Fungsi service "POST" (tambah data petani)
+// Service POST: Tambah data petani baru
 export const POST = async (request: NextRequest) => {
+  try {
     const { nama_value, kontak_value, alamat_value, produk_value } = await request.json();
 
-    const checkUSername = await prisma.petani.findMany({
-        where: {
-            nama : nama_value,
-            kontak: kontak_value,
-            alamat: alamat_value,
-            produk: produk_value,
-        }
+    const checkUser = await prisma.petani.findFirst({
+      where: {
+        nama: nama_value,
+        kontak: kontak_value,
+        alamat: alamat_value,
+        produk: produk_value,
+      },
     });
 
-    if (checkUSername.length >= 1) {
-        return NextResponse.json({
-            meta_data: {
-                error: 1,
-                message: "Data Username Gagal Disimpan! Username Sudah Terdaftar",
-                status: 404
-            },
-        }, {
-            status: 200
-        });
+    if (checkUser) {
+      return NextResponse.json(
+        {
+          meta_data: {
+            error: 1,
+            message: "Data Gagal Disimpan! Petani Sudah Terdaftar",
+            status: 409,
+          },
+        },
+        { status: 409 }
+      );
     }
 
-    // Tidak ada proses enkripsi di sini
     const save = await prisma.petani.create({
-        data: {
-            nama: nama_value,
-            kontak: kontak_value, // ← langsung disimpan tanpa hash
-            alamat: alamat_value,
-            produk: produk_value
-        },
+      data: {
+        nama: nama_value,
+        kontak: kontak_value,
+        alamat: alamat_value,
+        produk: produk_value,
+      },
     });
 
-    return NextResponse.json({
+    return NextResponse.json(
+      {
         meta_data: {
-            error: 0,
-            message: "Data Petani berhasil disimpan",
-            status: 201
+          error: 0,
+          message: "Data Petani Berhasil Disimpan",
+          status: 201,
         },
-    }, {
-        status: 201
-    });
+        data_user: save,
+      },
+      { status: 201 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        meta_data: {
+          error: 1,
+          message: "Terjadi kesalahan saat menyimpan data",
+          status: 500,
+        },
+      },
+      { status: 500 }
+    );
+  }
 };
