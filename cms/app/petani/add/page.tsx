@@ -3,12 +3,10 @@
 import { useState } from "react";
 import axios from "axios";
 
-export default function AddProdukPage() {
+export default function AddPetaniPage() {
   const [nama, setNama] = useState("");
-  const [deskripsi, setDeskripsi] = useState("");
-  const [harga, setHarga] = useState("");
-  const [stok, setStok] = useState("");
-  const [petaniId, setPetaniId] = useState("");
+  const [kontak, setKontak] = useState("");
+  const [alamat, setAlamat] = useState("");
 
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -19,21 +17,17 @@ export default function AddProdukPage() {
     setMessage("");
 
     try {
-      const response = await axios.post(`http://localhost:3001/api/produk`, {
+      const response = await axios.post(`http://localhost:3001/api/petani`, {
         nama_value: nama,
-        deskripsi_value: deskripsi,
-        harga_value: Number(harga), // konversi ke number
-        stok_value: Number(stok), // konversi ke number
-        petaniId_value: Number(petaniId), // konversi ke number
+        kontak_value: kontak,
+        alamat_value: alamat,
       });
 
       if (response.data?.meta_data?.error === 0) {
-        setMessage("Produk berhasil ditambahkan!");
+        setMessage("Data petani berhasil ditambahkan!");
         setNama("");
-        setDeskripsi("");
-        setHarga("");
-        setStok("");
-        setPetaniId("");
+        setKontak("");
+        setAlamat("");
       } else {
         setMessage(response.data?.meta_data?.message || "Terjadi kesalahan");
       }
@@ -51,12 +45,16 @@ export default function AddProdukPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-4 border rounded shadow">
-      <h1 className="text-2xl font-semibold mb-4">Tambah Produk Baru</h1>
+    <div className="max-w-md mx-auto mt-10 p-4 border rounded shadow bg-white">
+      <h1 className="text-2xl font-semibold mb-4">Tambah Data Petani</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label>Nama Produk</label>
+          <label htmlFor="nama" className="block font-medium mb-1">
+            Nama Petani
+          </label>
           <input
+            id="nama"
+            name="nama"
             type="text"
             value={nama}
             onChange={(e) => setNama(e.target.value)}
@@ -64,58 +62,47 @@ export default function AddProdukPage() {
             required
           />
         </div>
+
         <div>
-          <label>Deskripsi</label>
+          <label htmlFor="kontak" className="block font-medium mb-1">
+            Kontak
+          </label>
+          <input
+            id="kontak"
+            name="kontak"
+            type="text"
+            value={kontak}
+            onChange={(e) => setKontak(e.target.value)}
+            className="w-full border px-2 py-1 rounded"
+            required
+          />
+        </div>
+
+        <div>
+          <label htmlFor="alamat" className="block font-medium mb-1">
+            Alamat
+          </label>
           <textarea
-            value={deskripsi}
-            onChange={(e) => setDeskripsi(e.target.value)}
+            id="alamat"
+            name="alamat"
+            value={alamat}
+            onChange={(e) => setAlamat(e.target.value)}
             className="w-full border px-2 py-1 rounded"
             required
-          />
-        </div>
-        <div>
-          <label>Harga</label>
-          <input
-            type="number"
-            value={harga}
-            onChange={(e) => setHarga(e.target.value)}
-            className="w-full border px-2 py-1 rounded"
-            required
-            min="0"
-          />
-        </div>
-        <div>
-          <label>Stok</label>
-          <input
-            type="number"
-            value={stok}
-            onChange={(e) => setStok(e.target.value)}
-            className="w-full border px-2 py-1 rounded"
-            required
-            min="0"
-          />
-        </div>
-        <div>
-          <label>Petani ID</label>
-          <input
-            type="number"
-            value={petaniId}
-            onChange={(e) => setPetaniId(e.target.value)}
-            className="w-full border px-2 py-1 rounded"
-            required
-            min="1"
           />
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50">
-          {loading ? "Menyimpan..." : "Simpan Produk"}
+          className="bg-green-600 text-white px-4 py-2 rounded disabled:opacity-50">
+          {loading ? "Menyimpan..." : "Simpan Petani"}
         </button>
       </form>
 
-      {message && <p className="mt-4 text-center">{message}</p>}
+      {message && (
+        <p className="mt-4 text-center text-sm text-blue-700">{message}</p>
+      )}
     </div>
   );
 }
