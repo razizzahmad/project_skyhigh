@@ -103,20 +103,7 @@ export default function RootLayout({ children }: LayoutProps) {
                 {/* User Menu */}
                 <div className="flex items-center space-x-4">
                   {/* User Profile */}
-                  <div className="relative">
-                    <button
-                      onClick={() => setShowLogout(!showLogout)}
-                      className="flex items-center space-x-2 p-2 rounded-lg text-emerald-700 hover:bg-emerald-50 transition-colors"
-                      title="Profil Pengguna">
-                      <FontAwesomeIcon
-                        icon={faUserCircle}
-                        className="w-8 h-8"
-                      />
-                      <span className="hidden sm:block text-sm font-medium">
-                        Admin
-                      </span>
-                    </button>
-                  </div>
+                  <div className="relative"></div>
                 </div>
               </div>
             </div>
@@ -169,44 +156,6 @@ export default function RootLayout({ children }: LayoutProps) {
                     pertanian. Menghubungkan petani dengan teknologi modern
                     untuk hasil yang optimal.
                   </p>
-
-                  {/* Social Media */}
-                  <div className="flex space-x-4">
-                    {[
-                      {
-                        icon: faInstagram,
-                        href: "https://instagram.com/cropmarkethub",
-                        color: "hover:text-pink-600",
-                      },
-                      {
-                        icon: faTwitter,
-                        href: "https://twitter.com/cropmarkethub",
-                        color: "hover:text-blue-400",
-                      },
-                      {
-                        icon: faFacebook,
-                        href: "https://facebook.com/cropmarkethub",
-                        color: "hover:text-blue-700",
-                      },
-                      {
-                        icon: faYoutube,
-                        href: "https://youtube.com/cropmarkethub",
-                        color: "hover:text-red-600",
-                      },
-                    ].map((social, index) => (
-                      <a
-                        key={index}
-                        href={social.href}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className={`w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center text-emerald-700 ${social.color} transition-all duration-200 hover:scale-110`}>
-                        <FontAwesomeIcon
-                          icon={social.icon}
-                          className="w-5 h-5"
-                        />
-                      </a>
-                    ))}
-                  </div>
                 </div>
 
                 {/* Contact Info */}
@@ -230,13 +179,6 @@ export default function RootLayout({ children }: LayoutProps) {
                       </span>
                     </div>
                   </div>
-                </div>
-
-                {/* Quick Links */}
-                <div>
-                  <h4 className="text-lg font-semibold text-emerald-800 mb-4">
-                    Tautan Cepat
-                  </h4>
                 </div>
               </div>
 
