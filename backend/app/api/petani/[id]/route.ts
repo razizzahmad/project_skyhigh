@@ -3,75 +3,26 @@ import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
-// Service DELETE (hapus data user)
-export const DELETE = async (
+// GET: Detail petani by ID
+export async function GET(
   request: NextRequest,
-  props: { params: Promise<{ id: string }> }
-) => {
-  const params = await props.params;
+  { params }: { params: { id: string } }
+) {
   try {
-    const user = await prisma.petani.findUnique({
-      where: { id: Number(params.id) },
+    const id = Number(params.id);
+    if (isNaN(id)) throw new Error("ID bukan angka");
+
+    const petani = await prisma.petani.findUnique({
+      where: { id },
+      include: { produk: true }, // optional: tampilkan produk yang dimiliki
     });
 
-    if (!user) {
+    if (!petani) {
       return NextResponse.json(
         {
           meta_data: {
             error: 1,
-            message: "Data User Tidak Ditemukan",
-            status: 404,
-          },
-        },
-        { status: 404 }
-      );
-    }
-
-    await prisma.petani.delete({
-      where: { id: Number(params.id) },
-    });
-
-    return NextResponse.json(
-      {
-        meta_data: {
-          error: 0,
-          message: "Data User Berhasil Dihapus",
-          status: 200,
-        },
-      },
-      { status: 200 }
-    );
-  } catch (error) {
-    return NextResponse.json(
-      {
-        meta_data: {
-          error: 1,
-          message: "Parameter Slug (ID) Harus Angka!",
-          status: 400,
-        },
-      },
-      { status: 400 }
-    );
-  }
-};
-
-// Service GET (ambil detail data user)
-export const GET = async (
-  request: NextRequest,
-  props: { params: Promise<{ id: string }> }
-) => {
-  const params = await props.params;
-  try {
-    const user = await prisma.petani.findUnique({
-      where: { id: Number(params.id) },
-    });
-
-    if (!user) {
-      return NextResponse.json(
-        {
-          meta_data: {
-            error: 1,
-            message: "Data User Tidak Ditemukan",
+            message: "Data Petani Tidak Ditemukan",
             status: 404,
           },
         },
@@ -86,7 +37,7 @@ export const GET = async (
           message: null,
           status: 200,
         },
-        data_user: user,
+        data_petani: petani,
       },
       { status: 200 }
     );
@@ -95,33 +46,32 @@ export const GET = async (
       {
         meta_data: {
           error: 1,
-          message: "Parameter Slug (ID) Harus Angka!",
+          message: "Parameter ID harus berupa angka!",
           status: 400,
         },
       },
       { status: 400 }
     );
   }
-};
+}
 
-// Service PUT (ubah data user)
-export const PUT = async (
+// DELETE: Hapus petani by ID
+export async function DELETE(
   request: NextRequest,
-  props: { params: Promise<{ id: string }> }
-) => {
-  const params = await props.params;
-
+  { params }: { params: { id: string } }
+) {
   try {
-    const user = await prisma.petani.findUnique({
-      where: { id: Number(params.id) },
-    });
+    const id = Number(params.id);
+    if (isNaN(id)) throw new Error("ID bukan angka");
 
-    if (!user) {
+    const petani = await prisma.petani.findUnique({ where: { id } });
+
+    if (!petani) {
       return NextResponse.json(
         {
           meta_data: {
             error: 1,
-            message: "Data User Tidak Ditemukan",
+            message: "Data Petani Tidak Ditemukan",
             status: 404,
           },
         },
@@ -129,48 +79,13 @@ export const PUT = async (
       );
     }
 
-    const { nama_value, kontak_value, alamat_value, produk_value } = await request.json();
-
-    // Cek apakah data yang diupdate sudah ada di database, kecuali user ini sendiri
-    const checkUser = await prisma.petani.findMany({
-      where: {
-        kontak: kontak_value,
-        alamat: alamat_value,
-        produk: produk_value,
-        NOT: {
-          id: Number(params.id),
-        },
-      },
-    });
-
-    if (checkUser.length >= 1) {
-      return NextResponse.json(
-        {
-          meta_data: {
-            error: 1,
-            message: "Data Username Gagal Diubah! Username Sudah Terdaftar",
-            status: 409,
-          },
-        },
-        { status: 409 }
-      );
-    }
-
-    await prisma.petani.update({
-      where: { id: Number(params.id) },
-      data: {
-        nama: nama_value,
-        kontak: kontak_value,
-        alamat: alamat_value,
-        produk: produk_value,
-      },
-    });
+    await prisma.petani.delete({ where: { id } });
 
     return NextResponse.json(
       {
         meta_data: {
           error: 0,
-          message: "Data User Berhasil Diubah",
+          message: "Data Petani Berhasil Dihapus",
           status: 200,
         },
       },
@@ -181,11 +96,93 @@ export const PUT = async (
       {
         meta_data: {
           error: 1,
-          message: "Parameter Slug (ID) Harus Angka!",
+          message: "Parameter ID harus berupa angka!",
           status: 400,
         },
       },
       { status: 400 }
     );
   }
-};
+}
+
+// PUT: Ubah data petani by ID
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const id = Number(params.id);
+    if (isNaN(id)) throw new Error("ID bukan angka");
+
+    const { nama_value, kontak_value, alamat_value } = await request.json();
+
+    const petani = await prisma.petani.findUnique({ where: { id } });
+
+    if (!petani) {
+      return NextResponse.json(
+        {
+          meta_data: {
+            error: 1,
+            message: "Data Petani Tidak Ditemukan",
+            status: 404,
+          },
+        },
+        { status: 404 }
+      );
+    }
+
+    const duplikat = await prisma.petani.findFirst({
+      where: {
+        nama: nama_value,
+        kontak: kontak_value,
+        alamat: alamat_value,
+        NOT: { id },
+      },
+    });
+
+    if (duplikat) {
+      return NextResponse.json(
+        {
+          meta_data: {
+            error: 1,
+            message: "Data Petani Gagal Diubah! Sudah Terdaftar",
+            status: 409,
+          },
+        },
+        { status: 409 }
+      );
+    }
+
+    const updated = await prisma.petani.update({
+      where: { id },
+      data: {
+        nama: nama_value,
+        kontak: kontak_value,
+        alamat: alamat_value,
+      },
+    });
+
+    return NextResponse.json(
+      {
+        meta_data: {
+          error: 0,
+          message: "Data Petani Berhasil Diubah",
+          status: 200,
+        },
+        data_petani: updated,
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        meta_data: {
+          error: 1,
+          message: "Parameter ID harus berupa angka atau input tidak valid!",
+          status: 400,
+        },
+      },
+      { status: 400 }
+    );
+  }
+}

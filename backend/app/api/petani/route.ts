@@ -1,13 +1,16 @@
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
-// Buat instance Prisma
 const prisma = new PrismaClient();
 
-// Service GET: Ambil semua data petani
+// Service GET: Ambil semua data petani beserta produk-produk mereka (optional)
 export const GET = async () => {
   try {
-    const data = await prisma.petani.findMany();
+    const data = await prisma.petani.findMany({
+      include: {
+        produk: true, // kalau mau ambil produk-produk yang terkait, bisa diaktifkan
+      },
+    });
 
     if (data.length === 0) {
       return NextResponse.json(
@@ -47,17 +50,16 @@ export const GET = async () => {
   }
 };
 
-// Service POST: Tambah data petani baru
+// Service POST: Tambah data petani baru (hanya untuk data petani, tanpa produk)
 export const POST = async (request: NextRequest) => {
   try {
-    const { nama_value, kontak_value, alamat_value, produk_value } = await request.json();
+    const { nama_value, kontak_value, alamat_value } = await request.json();
 
+    // Cek apakah petani sudah ada berdasarkan nama dan kontak (bisa disesuaikan)
     const checkUser = await prisma.petani.findFirst({
       where: {
         nama: nama_value,
         kontak: kontak_value,
-        alamat: alamat_value,
-        produk: produk_value,
       },
     });
 
@@ -74,12 +76,12 @@ export const POST = async (request: NextRequest) => {
       );
     }
 
+    // Simpan data petani baru
     const save = await prisma.petani.create({
       data: {
         nama: nama_value,
         kontak: kontak_value,
         alamat: alamat_value,
-        produk: produk_value,
       },
     });
 
