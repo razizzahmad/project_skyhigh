@@ -1,9 +1,6 @@
 "use client";
 
-import { faPencil, faTrashCan } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import axios from "axios";
-import Link from "next/link";
 import useSWR from "swr";
 
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
@@ -15,7 +12,9 @@ export default function PetaniPage() {
   );
 
   const deleteData = async (id: string) => {
-    const response = await axios.delete(`http://localhost:3001/api/petani/${id}`);
+    const response = await axios.delete(
+      `http://localhost:3001/api/petani/${id}`
+    );
     mutate();
     alert(response.data.meta_data.message);
   };
@@ -27,20 +26,10 @@ export default function PetaniPage() {
           🌱 Data Petani
         </h1>
 
-        <div>
-          {/* buat tombol "tambah data"={} */}
-      <section className="text-right">
-
-       {/* <FontAwesomeIcon icon={faPlus} className="text-xs"/> */}
-      <Link href="petani/add" className="btn btn-outline btn-primary">Tambah Petani</Link>
-      </section>
-        </div>
-
         <div className="overflow-x-auto rounded-xl border border-gray-200">
           <table className="table w-full table-zebra">
             <thead className="bg-green-100 text-green-800">
               <tr className="text-center font-semibold">
-                <th className="py-3">Aksi</th>
                 <th>Nama</th>
                 <th>Kontak</th>
                 <th>Alamat</th>
@@ -56,21 +45,7 @@ export default function PetaniPage() {
               ) : (
                 data?.data_user.map((item: any) => (
                   <tr key={item.id}>
-                    <td className="space-x-2">
-                      <button
-                        className="bg-blue-500 hover:bg-blue-600 px-3 py-1.5 rounded text-white transition"
-                        title="Edit"
-                      >
-                        <FontAwesomeIcon icon={faPencil} />
-                      </button>
-                      <button
-                        className="bg-rose-500 hover:bg-rose-600 px-3 py-1.5 rounded text-white transition"
-                        onClick={() => deleteData(item.id)}
-                        title="Hapus"
-                      >
-                        <FontAwesomeIcon icon={faTrashCan} />
-                      </button>
-                    </td>
+                    <td className="space-x-2"></td>
                     <td>{item.nama}</td>
                     <td>{item.kontak}</td>
                     <td>{item.alamat}</td>

@@ -1,132 +1,103 @@
-
-//produk/add
 "use client";
 
-import { faPencil, faTrashCan } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import axios from "axios";
-import Link from "next/link";
 import useSWR from "swr";
 
-// SWR fetcher function
 const fetcher = (url: string) => fetch(url).then((res) => res.json());
 
 export default function ProdukPage() {
-  // Ambil data produk
-  const {
-    data: produkData,
-    error: produkError,
-    mutate: mutateProduk,
-  } = useSWR("http://localhost:3001/api/produk", fetcher);
-
-  // Ambil data petani
-  const { data: petaniData, error: petaniError } = useSWR(
-    "http://localhost:3001/api/petani",
+  const { data, error, isLoading } = useSWR(
+    `http://localhost:3001/api/produk`,
     fetcher
   );
 
-  // Fungsi hapus produk
-  const deleteData = async (id: string) => {
-    try {
-      const response = await axios.delete(`http://localhost:3001/api/produk/${id}`);
-      mutateProduk(); // refresh data produk setelah hapus
-      alert(response.data.meta_data.message);
-    } catch (err) {
-      alert("Gagal menghapus produk");
-    }
+  const formatRupiah = (angka: number) => {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR'
+    }).format(angka);
   };
 
-  // Loading dan error handling
-  if (!produkData || !petaniData) return <p>Loading...</p>;
-  if (produkError || petaniError) return <p>Failed to load data</p>;
-
-  // ✅ Perbaikan: Akses ke data_produk
-  const produkList = Array.isArray(produkData.data_produk) ? produkData.data_produk : [];
-  const petaniList = Array.isArray(petaniData.data_user) ? petaniData.data_user : [];
-
-  // Gabungkan produk dengan data petani berdasarkan petaniId
-  const produkDenganPetani = produkList.map((produk: any) => {
-    const petani = petaniList.find((p: any) => p.id === produk.petaniId);
-    return {
-      ...produk,
-      petaniNama: petani ? petani.nama : "Tidak ditemukan",
-    };
-  });
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-100 via-green-50 to-white p-6 flex items-center justify-center">
+        <div className="text-green-700 text-xl">Memuat data...</div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-100 via-green-50 to-white p-6 flex flex-col items-center justify-center">
-      <div className="w-full max-w-6xl bg-white p-6 rounded-2xl shadow-lg border border-lime-200">
-        <h1 className="text-3xl md:text-4xl font-extrabold text-lime-700 text-center mb-8">
-          🥕 Data Produk
-        </h1>
-
-        <div className="flex justify-end mb-4">
-          <Link
-            href="/produk/add"
-            className="bg-lime-600 hover:bg-lime-700 text-white font-medium px-4 py-2 rounded-xl shadow transition"
-          >
-            Tambah Produk
-          </Link>
+      <div className="w-full max-w-7xl bg-white p-6 rounded-2xl shadow-lg border border-green-200">
+        <div className="flex justify-center items-center mb-8">
+          <h1 className="text-3xl md:text-4xl font-extrabold text-green-700">
+            🌾 Data Produk Pertanian
+          </h1>
         </div>
 
         <div className="overflow-x-auto rounded-xl border border-gray-200">
           <table className="table w-full table-zebra">
-            <thead className="bg-lime-100 text-lime-800">
+            <thead className="bg-green-100 text-green-800">
               <tr className="text-center font-semibold">
-                <th className="py-3">Aksi</th>
-                <th>Gambar</th>
-                <th>Nama</th>
+                <th>No</th>
+                <th>Nama Produk</th>
                 <th>Deskripsi</th>
                 <th>Harga</th>
                 <th>Stok</th>
-                <th>Petani ID</th>
-                <th>Nama Petani</th>
+                <th>Petani</th>
+                <th>Kontak Petani</th>
               </tr>
             </thead>
             <tbody className="text-center">
-              {produkData.meta_data?.error === 1 ? (
+              {data?.meta_data?.error === 1 ? (
                 <tr>
-                  <td colSpan={8} className="text-center text-red-500 py-4">
-                    {produkData.meta_data.message}
+                  <td colSpan={7} className="text-center text-red-500 py-4">
+                    {data.meta_data.message}
+                  </td>
+                </tr>
+              ) : data?.data_produk?.length === 0 ? (
+                <tr>
+                  <td colSpan={7} className="text-center text-gray-500 py-8">
+                    Belum ada data produk
                   </td>
                 </tr>
               ) : (
-                produkDenganPetani.map((item: any) => (
-                  <tr key={item.id}>
-                    <td className="space-x-2">
-                      <button
-                        className="bg-blue-500 hover:bg-blue-600 px-3 py-1.5 rounded text-white transition"
-                        title="Edit"
-                      >
-                        <FontAwesomeIcon icon={faPencil} />
-                      </button>
-                      <button
-                        className="bg-rose-500 hover:bg-rose-600 px-3 py-1.5 rounded text-white transition"
-                        onClick={() => deleteData(item.id)}
-                        title="Hapus"
-                      >
-                        <FontAwesomeIcon icon={faTrashCan} />
-                      </button>
+                data?.data_produk?.map((item: any, index: number) => (
+                  <tr key={item.id} className="hover:bg-green-50">
+                    <td className="font-medium">{index + 1}</td>
+                    <td className="font-semibold text-green-700">{item.nama}</td>
+                    <td className="max-w-xs">
+                      <div className="truncate" title={item.deskripsi}>
+                        {item.deskripsi}
+                      </div>
+                    </td>
+                    <td className="font-semibold text-green-600">
+                      {formatRupiah(item.harga)}
                     </td>
                     <td>
-                      <img
-                        src="/images/TOMATOS.jpg"
-                        alt="Gambar Produk"
-                        className="w-16 h-16 object-cover rounded mx-auto"
-                      />
+                      <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        item.stok > 10 
+                          ? 'bg-green-100 text-green-800' 
+                          : item.stok > 0 
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-red-100 text-red-800'
+                      }`}>
+                        {item.stok} unit
+                      </span>
                     </td>
-                    <td>{item.nama}</td>
-                    <td>{item.deskripsi}</td>
-                    <td>{item.harga}</td>
-                    <td>{item.stok}</td>
-                    <td>{item.petaniId}</td>
-                    <td>{item.petaniNama}</td>
+                    <td className="font-medium">{item.petani?.nama || 'N/A'}</td>
+                    <td>{item.petani?.kontak || 'N/A'}</td>
                   </tr>
                 ))
               )}
             </tbody>
           </table>
         </div>
+
+        {data?.data_produk?.length > 0 && (
+          <div className="mt-6 text-center text-gray-600">
+            Total: {data.data_produk.length} produk
+          </div>
+        )}
       </div>
     </div>
   );
