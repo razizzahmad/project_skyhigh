@@ -32,7 +32,6 @@ export default function HomePage() {
     }
   };
 
-  // Fungsi logout (dummy)
   const handleLogout = () => {
     alert("Logout berhasil!");
     setShowLogout(false);
@@ -45,14 +44,13 @@ export default function HomePage() {
         <h1 className="text-2xl font-bold text-green-700"></h1>
         <div className="relative">
           <span title="Profil">
-  <FontAwesomeIcon
-    icon={faUserCircle}
-    className="text-3xl text-green-700 hover:text-green-900 transition cursor-pointer"
-    onClick={() => setShowLogout((prev) => !prev)}
-  />
-</span>
+            <FontAwesomeIcon
+              icon={faUserCircle}
+              className="text-3xl text-green-700 hover:text-green-900 transition cursor-pointer"
+              onClick={() => setShowLogout((prev) => !prev)}
+            />
+          </span>
 
-          {/* Tombol Logout */}
           {showLogout && (
             <button
               onClick={handleLogout}
@@ -86,12 +84,11 @@ export default function HomePage() {
           </Link>
         </div>
 
-        {/* Review Carousel dengan Tombol */}
+        {/* Review Carousel */}
         <section className="w-full px-4">
           <h3 className="text-2xl font-bold text-green-800 mb-4 text-center">Apa Kata Pelanggan?</h3>
 
           <div className="relative">
-            {/* Tombol Kiri */}
             <button
               onClick={() => scroll("left")}
               className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-green-100 hover:bg-green-300 text-green-800 p-2 rounded-full shadow z-10"
@@ -100,27 +97,28 @@ export default function HomePage() {
               <FontAwesomeIcon icon={faChevronLeft} />
             </button>
 
-            {/* Review List */}
             <div
               ref={scrollRef}
               className="flex space-x-4 overflow-x-hidden scroll-smooth pb-4 mx-10"
             >
-              {[{
-                name: "Budi Santoso",
-                review: "Produk sangat segar dan pengirimannya cepat. Terbaik!",
-              },
-              {
-                name: "Siti Aminah",
-                review: "Saya sangat puas dengan kualitas hasil tani dari CropMarket Hub.",
-              },
-              {
-                name: "Andi Wijaya",
-                review: "Layanan cepat dan harga bersaing. Pasti langganan!",
-              },
-              {
-                name: "Lestari Dewi",
-                review: "Suka banget sama tampilannya yang mudah dipakai dan informatif.",
-              }].map((item, idx) => (
+              {[
+                {
+                  name: "Budi Santoso",
+                  review: "Produk sangat segar dan pengirimannya cepat. Terbaik!",
+                },
+                {
+                  name: "Siti Aminah",
+                  review: "Saya sangat puas dengan kualitas hasil tani dari CropMarket Hub.",
+                },
+                {
+                  name: "Andi Wijaya",
+                  review: "Layanan cepat dan harga bersaing. Pasti langganan!",
+                },
+                {
+                  name: "Lestari Dewi",
+                  review: "Suka banget sama tampilannya yang mudah dipakai dan informatif.",
+                },
+              ].map((item, idx) => (
                 <div
                   key={idx}
                   className="min-w-[250px] bg-white rounded-xl shadow-lg p-4 border border-green-100 flex-shrink-0"
@@ -131,7 +129,6 @@ export default function HomePage() {
               ))}
             </div>
 
-            {/* Tombol Kanan */}
             <button
               onClick={() => scroll("right")}
               className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-green-100 hover:bg-green-300 text-green-800 p-2 rounded-full shadow z-10"
@@ -142,7 +139,7 @@ export default function HomePage() {
           </div>
         </section>
 
-        {/* Kontak Perusahaan */}
+        {/* Footer */}
         <footer className="mt-16 text-center text-green-700 space-y-4">
           <div className="flex justify-center items-center gap-2">
             <FontAwesomeIcon icon={faPhone} />
@@ -152,7 +149,6 @@ export default function HomePage() {
             <FontAwesomeIcon icon={faEnvelope} />
             <span>support@cropmarkethub.id</span>
           </div>
-
           <div className="flex justify-center items-center gap-2">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -169,6 +165,21 @@ export default function HomePage() {
               />
             </svg>
             <span>Senin - Jumat: 08:00 - 17:00</span>
+          </div>
+          <div className="flex justify-center items-center gap-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 text-green-700"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M5.05 3.05a7 7 0 119.9 9.9l-4.95 4.95a.7.7 0 01-.99 0l-4.95-4.95a7 7 0 010-9.9zM10 11a3 3 0 100-6 3 3 0 000 6z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <span>Jl.Pagar Alam,Gg.Ulangan,Segala Mider,Tanjung Karang Barat</span>
           </div>
 
           <div className="flex justify-center space-x-6 mt-4 text-2xl">
