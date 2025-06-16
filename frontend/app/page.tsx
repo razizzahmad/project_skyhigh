@@ -73,15 +73,15 @@ export default function HomePage() {
         <div className="w-full max-w-md space-y-6 mb-12">
           <Link href="/petani">
             <div className="bg-white shadow-xl hover:shadow-green-300 transition rounded-2xl p-5 text-center border border-green-200 hover:bg-green-50">
-              <h2 className="text-lg font-semibold text-green-700">Kelola Data Petani</h2>
-              <p className="text-sm text-gray-500">Tambah, ubah, dan lihat data petani</p>
+              <h2 className="text-lg font-semibold text-green-700">Data Petani</h2>
+              <p className="text-sm text-gray-500">Lihat data petani</p>
             </div>
           </Link>
 
           <Link href="/produk">
             <div className="bg-white shadow-xl hover:shadow-lime-300 transition rounded-2xl p-5 text-center border border-lime-200 hover:bg-lime-50">
-              <h2 className="text-lg font-semibold text-lime-700">Kelola Data Produk</h2>
-              <p className="text-sm text-gray-500">Manajemen produk hasil pertanian</p>
+              <h2 className="text-lg font-semibold text-lime-700">Data Produk</h2>
+              <p className="text-sm text-gray-500">Lihat produk hasil pertanian</p>
             </div>
           </Link>
         </div>
