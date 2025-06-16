@@ -50,86 +50,102 @@ export default function HomePage() {
     },
   ];
 
-  const stats = [
-    { number: "1,000+", label: "Petani Terdaftar" },
-    { number: "5,000+", label: "Produk Dikelola" },
-    { number: "99.9%", label: "Uptime Server" },
-    { number: "24/7", label: "Support" },
-  ];
-
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-100 via-teal-100 to-cyan-100">
+      <section className="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20">
-          <div className="text-center">
-            <div className="inline-flex items-center px-4 py-2 bg-emerald-100 rounded-full text-emerald-800 text-sm font-medium mb-8">
-              <FontAwesomeIcon icon={faSeedling} className="w-4 h-4 mr-2" />
-              Platform Pertanian Modern
-            </div>
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="py-16 sm:py-20 lg:py-24">
+            <div className="text-center space-y-8">
+              {/* Badge */}
+              <div className="inline-flex items-center px-4 py-2 bg-emerald-100 rounded-full text-emerald-800 text-sm font-medium">
+                <FontAwesomeIcon icon={faSeedling} className="w-4 h-4 mr-2" />
+                Platform Pertanian Modern
+              </div>
 
-            <h1 className="text-4xl md:text-6xl font-bold text-emerald-900 mb-6 leading-tight">
-              Revolusi Digital untuk
-              <span className="bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
-                {" "}
-                Pertanian Indonesia
-              </span>
-            </h1>
+              {/* Main Heading */}
+              <div className="space-y-4">
+                <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-emerald-900 leading-tight">
+                  Revolusi Digital untuk
+                  <span className="block bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">
+                    Pertanian Indonesia
+                  </span>
+                </h1>
+              </div>
 
-            <p className="text-xl text-emerald-700 mb-10 max-w-3xl mx-auto leading-relaxed">
-              CropMarket Hub menghadirkan solusi teknologi terdepan untuk
-              mengelola data petani, produk pertanian, dan mengoptimalkan hasil
-              panen dengan sistem yang terintegrasi.
-            </p>
+              {/* Description */}
+              <div className="max-w-4xl mx-auto">
+                <p className="text-lg sm:text-xl text-emerald-700 leading-relaxed">
+                  CropMarket Hub menghadirkan solusi teknologi terdepan untuk
+                  mengelola data petani, produk pertanian, dan mengoptimalkan
+                  hasil panen dengan sistem yang terintegrasi.
+                </p>
+              </div>
 
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/petani"
-                className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
-                Mulai Sekarang
-                <FontAwesomeIcon icon={faArrowRight} className="ml-2 w-4 h-4" />
-              </Link>
+              {/* CTA Button */}
+              <div className="pt-4">
+                <Link
+                  href="/petani"
+                  className="inline-flex items-center justify-center px-8 py-4 bg-gradient-to-r from-emerald-600 to-teal-600 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 ease-in-out">
+                  Mulai Sekarang
+                  <FontAwesomeIcon
+                    icon={faArrowRight}
+                    className="ml-2 w-4 h-4"
+                  />
+                </Link>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
       {/* Features Section */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-emerald-50">
+      <section className="py-16 sm:py-20 bg-gradient-to-br from-gray-50 to-emerald-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-emerald-900 mb-4">
-              Fitur Unggulan Platform
-            </h2>
-            <p className="text-xl text-emerald-700 max-w-2xl mx-auto">
-              Dapatkan kemudahan mengelola bisnis pertanian dengan fitur-fitur
-              canggih yang dirancang khusus untuk kebutuhan Anda
-            </p>
+          {/* Section Header */}
+          <div className="text-center mb-12 sm:mb-16">
+            <div className="space-y-4">
+              <h2 className="text-3xl sm:text-4xl font-bold text-emerald-900">
+                Fitur Unggulan Platform
+              </h2>
+              <div className="max-w-3xl mx-auto">
+                <p className="text-lg sm:text-xl text-emerald-700">
+                  Dapatkan kemudahan mengelola bisnis pertanian dengan
+                  fitur-fitur canggih yang dirancang khusus untuk kebutuhan Anda
+                </p>
+              </div>
+            </div>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          {/* Features Grid */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
             {features.map((feature, index) => (
               <Link
                 key={index}
                 href={feature.href}
                 className="group bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden transform hover:-translate-y-2">
-                <div className="p-8">
-                  <div
-                    className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
-                    <FontAwesomeIcon
-                      icon={feature.icon}
-                      className="w-8 h-8 text-white"
-                    />
+                <div className="p-6 sm:p-8">
+                  <div className="flex flex-col items-center text-center space-y-4">
+                    {/* Icon */}
+                    <div
+                      className={`w-16 h-16 bg-gradient-to-br ${feature.color} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                      <FontAwesomeIcon
+                        icon={feature.icon}
+                        className="w-8 h-8 text-white"
+                      />
+                    </div>
+
+                    {/* Content */}
+                    <div className="space-y-3">
+                      <h3 className="text-xl font-bold text-gray-900 group-hover:text-emerald-800 transition-colors">
+                        {feature.title}
+                      </h3>
+                      <p className="text-gray-600 leading-relaxed">
+                        {feature.description}
+                      </p>
+                    </div>
                   </div>
-
-                  <h3 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-emerald-800 transition-colors">
-                    {feature.title}
-                  </h3>
-
-                  <p className="text-gray-600 mb-4 leading-relaxed">
-                    {feature.description}
-                  </p>
                 </div>
               </Link>
             ))}
@@ -138,63 +154,48 @@ export default function HomePage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-white">
+      <section className="py-16 sm:py-20 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-emerald-900 mb-4">
-              Mengapa Memilih CropMarket Hub?
-            </h2>
-            <p className="text-xl text-emerald-700 max-w-2xl mx-auto">
-              Kami berkomitmen memberikan layanan terbaik dengan teknologi
-              terdepan untuk mendukung kemajuan pertanian Indonesia
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            {benefits.map((benefit, index) => (
-              <div key={index} className="text-center">
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <FontAwesomeIcon
-                    icon={benefit.icon}
-                    className="w-8 h-8 text-emerald-600"
-                  />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-3">
-                  {benefit.title}
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {benefit.description}
+          {/* Section Header */}
+          <div className="text-center mb-12 sm:mb-16">
+            <div className="space-y-4">
+              <h2 className="text-3xl sm:text-4xl font-bold text-emerald-900">
+                Mengapa Memilih CropMarket Hub?
+              </h2>
+              <div className="max-w-3xl mx-auto">
+                <p className="text-lg sm:text-xl text-emerald-700">
+                  Kami berkomitmen memberikan layanan terbaik dengan teknologi
+                  terdepan untuk mendukung kemajuan pertanian Indonesia
                 </p>
               </div>
-            ))}
+            </div>
           </div>
-        </div>
-      </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-br from-emerald-600 to-teal-600">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-            Siap Memulai Transformasi Digital?
-          </h2>
-          <p className="text-xl text-emerald-100 mb-10 max-w-2xl mx-auto">
-            Bergabunglah dengan ribuan petani yang telah merasakan manfaat
-            platform kami. Mulai kelola data pertanian Anda dengan lebih efisien
-            hari ini.
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link
-              href="/petani"
-              className="inline-flex items-center justify-center px-8 py-4 bg-white text-emerald-700 font-semibold rounded-xl shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200">
-              <FontAwesomeIcon icon={faUsers} className="mr-2 w-4 h-4" />
-              Kelola Data Petani
-            </Link>
-            <Link
-              href="/produk"
-              className="inline-flex items-center justify-center px-8 py-4 bg-emerald-500 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:bg-emerald-400 transition-all duration-200">
-              <FontAwesomeIcon icon={faBoxOpen} className="mr-2 w-4 h-4" />
-              Kelola Data Produk
-            </Link>
+          {/* Benefits Grid */}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {benefits.map((benefit, index) => (
+              <div key={index} className="text-center space-y-4">
+                {/* Icon */}
+                <div className="flex justify-center">
+                  <div className="w-16 h-16 bg-gradient-to-br from-emerald-100 to-teal-100 rounded-full flex items-center justify-center">
+                    <FontAwesomeIcon
+                      icon={benefit.icon}
+                      className="w-8 h-8 text-emerald-600"
+                    />
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="space-y-3">
+                  <h3 className="text-xl font-bold text-gray-900">
+                    {benefit.title}
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    {benefit.description}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
