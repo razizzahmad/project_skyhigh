@@ -86,66 +86,74 @@ export default function EditProdukPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-100 via-green-50 to-white p-6 flex flex-col items-center justify-center">
-      <div className="w-full max-w-xl bg-white p-6 rounded-2xl shadow-lg border border-green-200">
-        <h1 className="text-3xl font-bold text-green-700 mb-6 text-center">
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white p-6 flex items-center justify-center">
+      <div className="w-full max-w-xl bg-white rounded-2xl shadow-md border border-green-200 p-8">
+        <h1 className="text-3xl font-bold text-green-800 mb-6 text-center">
           ✏️ Edit Produk
         </h1>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block mb-1 font-medium">Nama Produk</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Nama Produk
+            </label>
             <input
               type="text"
               value={nama}
               onChange={(e) => setNama(e.target.value)}
-              className="w-full border px-3 py-2 rounded"
-              required
+              className="w-full px-4 py-2 border border-green-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-green-800 placeholder:text-gray-500 font-medium"
             />
           </div>
 
           <div>
-            <label className="block mb-1 font-medium">Deskripsi</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Deskripsi
+            </label>
             <textarea
               value={deskripsi}
               onChange={(e) => setDeskripsi(e.target.value)}
-              className="w-full border px-3 py-2 rounded"
-              required
+              className="w-full px-4 py-2 border border-green-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-green-800 placeholder:text-gray-500 font-medium"
+              rows={3}
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block mb-1 font-medium">Harga</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                Harga
+              </label>
               <input
-                type="number"
+                type="text"
                 value={harga}
                 onChange={(e) => setHarga(e.target.value)}
-                className="w-full border px-3 py-2 rounded"
-                required
+                className="w-full px-4 py-2 border border-green-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-green-800 placeholder:text-gray-500 font-medium"
               />
             </div>
 
             <div>
-              <label className="block mb-1 font-medium">Stok</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                Stok
+              </label>
               <input
-                type="number"
+                type="text"
                 value={stok}
                 onChange={(e) => setStok(e.target.value)}
-                className="w-full border px-3 py-2 rounded"
-                required
+                className="w-full px-4 py-2 border border-green-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-green-800 placeholder:text-gray-500 font-medium"
               />
             </div>
           </div>
 
           <div>
-            <label className="block mb-1 font-medium">Petani</label>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Petani
+            </label>
             <select
               value={petaniId}
               onChange={(e) => setPetaniId(e.target.value)}
-              className="w-full border px-3 py-2 rounded"
-              required>
-              <option value="">-- Pilih Petani --</option>
+              className="w-full px-4 py-2 border border-green-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-green-800 font-medium">
+              <option value="" className="text-gray-500">
+                -- Pilih Petani --
+              </option>
               {listPetani.map((petani) => (
                 <option key={petani.id} value={petani.id}>
                   {petani.nama}
@@ -156,13 +164,13 @@ export default function EditProdukPage() {
 
           <button
             type="submit"
-            className="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded transition">
-            Simpan Perubahan
+            className="w-full py-2 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md shadow transition-all">
+            💾 Simpan Perubahan
           </button>
 
           {message && (
             <p
-              className={`text-center text-sm mt-2 ${
+              className={`text-center text-sm mt-2 font-medium ${
                 error ? "text-red-600" : "text-green-600"
               }`}>
               {message}
