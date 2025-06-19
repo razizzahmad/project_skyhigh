@@ -1,122 +1,25 @@
-"use client";
+// app/petani/layout.tsx
 
-import { useState } from "react";
-import axios from "axios";
+import type { Metadata } from "next";
+import "../globals.css";
 
-export default function AddProdukPage() {
-  const [nama, setNama] = useState("");
-  const [deskripsi, setDeskripsi] = useState("");
-  const [harga, setHarga] = useState("");
-  const [stok, setStok] = useState("");
-  const [petaniId, setPetaniId] = useState("");
+export const metadata: Metadata = {
+  title: "Halaman Produk",
+  description: "Dashboard petani di CropMarket Hub",
+};
 
-  const [message, setMessage] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
-
-    try {
-      const response = await axios.post(`http://localhost:3001/api/produk`, {
-        nama_value: nama,
-        deskripsi_value: deskripsi,
-        harga_value: Number(harga), // pastikan angka
-        stok_value: Number(stok), // pastikan angka
-        petaniId_value: Number(petaniId), // pastikan angka
-      });
-
-      if (response.data?.meta_data?.error === 0) {
-        setMessage("Produk berhasil ditambahkan!");
-        // reset form setelah sukses
-        setNama("");
-        setDeskripsi("");
-        setHarga("");
-        setStok("");
-        setPetaniId("");
-      } else {
-        setMessage(response.data?.meta_data?.message || "Terjadi kesalahan");
-      }
-    } catch (error: any) {
-      if (error.response) {
-        setMessage(
-          error.response.data?.meta_data?.message || "Gagal mengirim data"
-        );
-      } else {
-        setMessage("Terjadi kesalahan koneksi");
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
+export default function ProdukLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div className="max-w-md mx-auto mt-10 p-4 border rounded shadow">
-      <h1 className="text-2xl font-semibold mb-4">Tambah Produk Baru</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label>Nama Produk</label>
-          <input
-            type="text"
-            value={nama}
-            onChange={(e) => setNama(e.target.value)}
-            className="w-full border px-2 py-1 rounded"
-            required
-          />
-        </div>
-        <div>
-          <label>Deskripsi</label>
-          <textarea
-            value={deskripsi}
-            onChange={(e) => setDeskripsi(e.target.value)}
-            className="w-full border px-2 py-1 rounded"
-            required
-          />
-        </div>
-        <div>
-          <label>Harga</label>
-          <input
-            type="number"
-            value={harga}
-            onChange={(e) => setHarga(e.target.value)}
-            className="w-full border px-2 py-1 rounded"
-            required
-            min="0"
-          />
-        </div>
-        <div>
-          <label>Stok</label>
-          <input
-            type="number"
-            value={stok}
-            onChange={(e) => setStok(e.target.value)}
-            className="w-full border px-2 py-1 rounded"
-            required
-            min="0"
-          />
-        </div>
-        <div>
-          <label>Petani ID</label>
-          <input
-            type="number"
-            value={petaniId}
-            onChange={(e) => setPetaniId(e.target.value)}
-            className="w-full border px-2 py-1 rounded"
-            required
-            min="1"
-          />
-        </div>
+    <main className="min-h-[calc(100vh-100px)] p-4 max-w-6xl mx-auto">
+      {/* Bisa tambah header atau sidebar khusus petani di sini */}
 
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-blue-600 text-white px-4 py-2 rounded disabled:opacity-50">
-          {loading ? "Menyimpan..." : "Simpan Produk"}
-        </button>
-      </form>
+      {children}
 
-      {message && <p className="mt-4 text-center">{message}</p>}
-    </div>
+      {/* Bisa tambah footer khusus petani di sini */}
+    </main>
   );
 }
