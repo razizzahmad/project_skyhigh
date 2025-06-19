@@ -4,123 +4,180 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 
-export default function EditPetaniPage() {
+export default function EditProdukPage() {
   const params = useParams();
   const router = useRouter();
   const id = Array.isArray(params?.id) ? params.id[0] : params?.id;
 
   const [nama, setNama] = useState("");
-  const [kontak, setKontak] = useState("");
-  const [alamat, setAlamat] = useState("");
+  const [deskripsi, setDeskripsi] = useState("");
+  const [harga, setHarga] = useState("");
+  const [stok, setStok] = useState("");
+  const [petaniId, setPetaniId] = useState("");
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [listPetani, setListPetani] = useState<any[]>([]);
 
   useEffect(() => {
     if (!id) return;
 
-    const fetchPetani = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get(`http://localhost:3001/api/petani/${id}`);
-        const petani = res.data.data_petani;
+        const [produkRes, petaniRes] = await Promise.all([
+          axios.get(`http://localhost:3001/api/produk/${id}`),
+          axios.get("http://localhost:3001/api/petani"),
+        ]);
 
-        if (!petani) throw new Error("Data tidak ditemukan");
+        const produk = produkRes.data.data_produk;
+        if (!produk) throw new Error("Data produk tidak ditemukan");
 
-        setNama(petani.nama || "");
-        setKontak(petani.kontak || "");
-        setAlamat(petani.alamat || "");
+        setNama(produk.nama || "");
+        setDeskripsi(produk.deskripsi || "");
+        setHarga(produk.harga?.toString() || "");
+        setStok(produk.stok?.toString() || "");
+        setPetaniId(produk.petani_id?.toString() || "");
 
+        setListPetani(petaniRes.data.data_petani || []);
         setError(false);
         setMessage("");
       } catch (err) {
         console.error("Fetch error:", err);
         setError(true);
-        setMessage("Gagal mengambil data petani");
+        setMessage("Gagal mengambil data produk");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchPetani();
+    fetchData();
   }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
     try {
-      const res = await axios.put(`http://localhost:3001/api/petani/${id}`, {
+      const res = await axios.put(`http://localhost:3001/api/produk/${id}`, {
         nama,
-        kontak,
-        alamat,
+        deskripsi,
+        harga: parseInt(harga),
+        stok: parseInt(stok),
+        petaniId: parseInt(petaniId),
       });
-      
+
       if (res.data.meta_data?.error === 0) {
-        setMessage("Berhasil memperbarui data");
-        setError(false);
-        router.push("/petani"); // redirect ke halaman list petani
+        router.push("/produk");
       } else {
-        throw new Error("Gagal memperbarui");
+        throw new Error("Gagal memperbarui produk");
       }
     } catch (err) {
       console.error("Update error:", err);
       setError(true);
-      setMessage("Gagal memperbarui data petani");
+      setMessage("Gagal memperbarui produk");
     }
   };
 
   if (loading) {
     return (
-      <div className="max-w-md mx-auto p-4">
-        <p className="text-gray-500">Memuat data...</p>
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-600 text-lg">⏳ Memuat data produk...</p>
       </div>
     );
   }
 
   return (
-    <div className="max-w-md mx-auto p-4 bg-white rounded shadow">
-      <h1 className="text-2xl font-bold mb-4">Edit Data Petani</h1>
+    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white p-6 flex items-center justify-center">
+      <div className="w-full max-w-xl bg-white rounded-2xl shadow-md border border-green-200 p-8">
+        <h1 className="text-3xl font-bold text-green-800 mb-6 text-center">
+          ✏️ Edit Produk
+        </h1>
 
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Nama Petani"
-          value={nama}
-          onChange={(e) => setNama(e.target.value)}
-          className="w-full mb-2 p-2 border rounded"
-          required
-        />
-        <input
-          type="text"
-          placeholder="Kontak"
-          value={kontak}
-          onChange={(e) => setKontak(e.target.value)}
-          className="w-full mb-2 p-2 border rounded"
-          required
-        />
-        <textarea
-          placeholder="Alamat"
-          value={alamat}
-          onChange={(e) => setAlamat(e.target.value)}
-          className="w-full mb-2 p-2 border rounded"
-          required
-        />
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Nama Produk
+            </label>
+            <input
+              type="text"
+              value={nama}
+              onChange={(e) => setNama(e.target.value)}
+              className="w-full px-4 py-2 border border-green-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-green-800 placeholder:text-gray-500 font-medium"
+            />
+          </div>
 
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition">
-          Perbarui Data
-        </button>
-      </form>
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Deskripsi
+            </label>
+            <textarea
+              value={deskripsi}
+              onChange={(e) => setDeskripsi(e.target.value)}
+              className="w-full px-4 py-2 border border-green-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-green-800 placeholder:text-gray-500 font-medium"
+              rows={3}
+            />
+          </div>
 
-      {message && (
-        <p
-          className={`mt-4 text-sm ${
-            error ? "text-red-600" : "text-green-600"
-          }`}>
-          {message}
-        </p>
-      )}
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                Harga
+              </label>
+              <input
+                type="text"
+                value={harga}
+                onChange={(e) => setHarga(e.target.value)}
+                className="w-full px-4 py-2 border border-green-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-green-800 placeholder:text-gray-500 font-medium"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">
+                Stok
+              </label>
+              <input
+                type="text"
+                value={stok}
+                onChange={(e) => setStok(e.target.value)}
+                className="w-full px-4 py-2 border border-green-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-green-800 placeholder:text-gray-500 font-medium"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Petani
+            </label>
+            <select
+              value={petaniId}
+              onChange={(e) => setPetaniId(e.target.value)}
+              className="w-full px-4 py-2 border border-green-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-green-800 font-medium">
+              <option value="" className="text-gray-500">
+                -- Pilih Petani --
+              </option>
+              {listPetani.map((petani) => (
+                <option key={petani.id} value={petani.id}>
+                  {petani.nama}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md shadow transition-all">
+            💾 Simpan Perubahan
+          </button>
+
+          {message && (
+            <p
+              className={`text-center text-sm mt-2 font-medium ${
+                error ? "text-red-600" : "text-green-600"
+              }`}>
+              {message}
+            </p>
+          )}
+        </form>
+      </div>
     </div>
   );
 }
