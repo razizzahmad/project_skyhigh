@@ -1,183 +1,332 @@
 "use client";
-
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import axios from "axios";
 
-export default function EditProdukPage() {
+function EditPetaniPage() {
   const params = useParams();
   const router = useRouter();
   const id = Array.isArray(params?.id) ? params.id[0] : params?.id;
 
   const [nama, setNama] = useState("");
-  const [deskripsi, setDeskripsi] = useState("");
-  const [harga, setHarga] = useState("");
-  const [stok, setStok] = useState("");
-  const [petaniId, setPetaniId] = useState("");
+  const [kontak, setKontak] = useState("");
+  const [alamat, setAlamat] = useState("");
 
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [listPetani, setListPetani] = useState<any[]>([]);
+  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     if (!id) return;
 
-    const fetchData = async () => {
+    const fetchPetani = async () => {
       try {
-        const [produkRes, petaniRes] = await Promise.all([
-          axios.get(`http://localhost:3001/api/produk/${id}`),
-          axios.get("http://localhost:3001/api/petani"),
-        ]);
+        const res = await axios.get(`http://localhost:3001/api/petani/${id}`);
+        const petani = res.data.data_petani;
 
-        const produk = produkRes.data.data_produk;
-        if (!produk) throw new Error("Data produk tidak ditemukan");
+        if (!petani) throw new Error("Data tidak ditemukan");
 
-        setNama(produk.nama || "");
-        setDeskripsi(produk.deskripsi || "");
-        setHarga(produk.harga?.toString() || "");
-        setStok(produk.stok?.toString() || "");
-        setPetaniId(produk.petani_id?.toString() || "");
+        setNama(petani.nama || "");
+        setKontak(petani.kontak || "");
+        setAlamat(petani.alamat || "");
 
-        setListPetani(petaniRes.data.data_petani || []);
         setError(false);
         setMessage("");
       } catch (err) {
         console.error("Fetch error:", err);
         setError(true);
-        setMessage("Gagal mengambil data produk");
+        setMessage("Gagal mengambil data petani");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchData();
+    fetchPetani();
   }, [id]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitting(true);
+
     try {
-      const res = await axios.put(`http://localhost:3001/api/produk/${id}`, {
+      const res = await axios.put(`http://localhost:3001/api/petani/${id}`, {
         nama,
-        deskripsi,
-        harga: parseInt(harga),
-        stok: parseInt(stok),
-        petaniId: parseInt(petaniId),
+        kontak,
+        alamat,
       });
 
       if (res.data.meta_data?.error === 0) {
-        router.push("/produk");
+        setMessage("Berhasil memperbarui data");
+        setError(false);
+        setTimeout(() => {
+          router.push("/petani");
+        }, 1500);
       } else {
-        throw new Error("Gagal memperbarui produk");
+        throw new Error("Gagal memperbarui");
       }
     } catch (err) {
       console.error("Update error:", err);
       setError(true);
-      setMessage("Gagal memperbarui produk");
+      setMessage("Gagal memperbarui data petani");
+    } finally {
+      setSubmitting(false);
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-gray-600 text-lg">⏳ Memuat data produk...</p>
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-green-50 to-teal-50 flex items-center justify-center">
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl p-8 max-w-sm w-full mx-4">
+          <div className="flex flex-col items-center space-y-4">
+            <div className="animate-spin rounded-full h-12 w-12 border-4 border-teal-500 border-t-transparent"></div>
+            <p className="text-gray-700 font-bold">Memuat data...</p>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-green-50 to-white p-6 flex items-center justify-center">
-      <div className="w-full max-w-xl bg-white rounded-2xl shadow-md border border-green-200 p-8">
-        <h1 className="text-3xl font-bold text-green-800 mb-6 text-center">
-          ✏️ Edit Produk
-        </h1>
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Nama Produk
-            </label>
-            <input
-              type="text"
-              value={nama}
-              onChange={(e) => setNama(e.target.value)}
-              className="w-full px-4 py-2 border border-green-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-green-800 placeholder:text-gray-500 font-medium"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Deskripsi
-            </label>
-            <textarea
-              value={deskripsi}
-              onChange={(e) => setDeskripsi(e.target.value)}
-              className="w-full px-4 py-2 border border-green-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-green-800 placeholder:text-gray-500 font-medium"
-              rows={3}
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Harga
-              </label>
-              <input
-                type="text"
-                value={harga}
-                onChange={(e) => setHarga(e.target.value)}
-                className="w-full px-4 py-2 border border-green-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-green-800 placeholder:text-gray-500 font-medium"
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-green-50 to-teal-50 py-8 px-4">
+      <div className="max-w-2xl mx-auto">
+        {/* Header Section */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-teal-500 to-green-600 rounded-full mb-4 shadow-lg">
+            <svg
+              className="w-8 h-8 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
               />
-            </div>
-
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Stok
-              </label>
-              <input
-                type="text"
-                value={stok}
-                onChange={(e) => setStok(e.target.value)}
-                className="w-full px-4 py-2 border border-green-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-green-800 placeholder:text-gray-500 font-medium"
-              />
-            </div>
+            </svg>
           </div>
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-700 bg-clip-text text-transparent mb-2">
+            Edit Data Petani
+          </h1>
+          <p className="text-gray-600 text-lg font-medium">
+            Perbarui informasi data petani
+          </p>
+        </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Petani
-            </label>
-            <select
-              value={petaniId}
-              onChange={(e) => setPetaniId(e.target.value)}
-              className="w-full px-4 py-2 border border-green-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-400 text-green-800 font-medium">
-              <option value="" className="text-gray-500">
-                -- Pilih Petani --
-              </option>
-              {listPetani.map((petani) => (
-                <option key={petani.id} value={petani.id}>
-                  {petani.nama}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <button
-            type="submit"
-            className="w-full py-2 px-4 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-md shadow transition-all">
-            💾 Simpan Perubahan
-          </button>
-
-          {message && (
-            <p
-              className={`text-center text-sm mt-2 font-medium ${
-                error ? "text-red-600" : "text-green-600"
-              }`}>
-              {message}
+        {/* Main Form Card */}
+        <div className="bg-white/70 backdrop-blur-sm rounded-2xl shadow-xl border border-white/20 overflow-hidden">
+          <div className="bg-gradient-to-r from-teal-500 to-green-600 px-8 py-6">
+            <h2 className="text-xl font-bold text-white">
+              Formulir Edit Petani
+            </h2>
+            <p className="text-teal-100 mt-1 font-medium">
+              Lengkapi informasi di bawah ini
             </p>
-          )}
-        </form>
+          </div>
+
+          <div className="p-8">
+            <form onSubmit={handleSubmit} className="space-y-6">
+              {/* Nama Field */}
+              <div className="space-y-2">
+                <label className="block text-sm font-bold text-gray-800">
+                  Nama Petani
+                  <span className="text-red-500 ml-1">*</span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg
+                      className="h-5 w-5 text-gray-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Masukkan nama lengkap petani"
+                    value={nama}
+                    onChange={(e) => setNama(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm placeholder-gray-500 text-gray-800 font-medium"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Kontak Field */}
+              <div className="space-y-2">
+                <label className="block text-sm font-bold text-gray-800">
+                  Nomor Kontak
+                  <span className="text-red-500 ml-1">*</span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg
+                      className="h-5 w-5 text-gray-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                      />
+                    </svg>
+                  </div>
+                  <input
+                    type="text"
+                    placeholder="Masukkan nomor telepon atau WhatsApp"
+                    value={kontak}
+                    onChange={(e) => setKontak(e.target.value)}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm placeholder-gray-500 text-gray-800 font-medium"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Alamat Field */}
+              <div className="space-y-2">
+                <label className="block text-sm font-bold text-gray-800">
+                  Alamat Lengkap
+                  <span className="text-red-500 ml-1">*</span>
+                </label>
+                <div className="relative">
+                  <div className="absolute top-3 left-0 pl-3 flex items-start pointer-events-none">
+                    <svg
+                      className="h-5 w-5 text-gray-500 mt-0.5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                    </svg>
+                  </div>
+                  <textarea
+                    placeholder="Masukkan alamat lengkap termasuk RT/RW, Kelurahan, Kecamatan"
+                    value={alamat}
+                    onChange={(e) => setAlamat(e.target.value)}
+                    rows={4}
+                    className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-teal-500 focus:border-transparent transition-all duration-200 bg-white/80 backdrop-blur-sm placeholder-gray-500 text-gray-800 font-medium resize-none"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Submit Button */}
+              <div className="pt-4">
+                <button
+                  type="submit"
+                  disabled={submitting}
+                  className="w-full bg-gradient-to-r from-teal-500 to-green-600 hover:from-teal-600 hover:to-green-700 text-white font-bold py-3 px-6 rounded-xl transition-all duration-200 transform hover:scale-[1.02] hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100 flex items-center justify-center space-x-2">
+                  {submitting ? (
+                    <>
+                      <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                      <span>Memperbarui...</span>
+                    </>
+                  ) : (
+                    <>
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+                        />
+                      </svg>
+                      <span>Perbarui Data Petani</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
+
+            {/* Message Display */}
+            {message && (
+              <div
+                className={`mt-6 p-4 rounded-xl border-l-4 ${
+                  error
+                    ? "bg-red-50 border-red-400 text-red-700"
+                    : "bg-green-50 border-green-400 text-green-700"
+                }`}>
+                <div className="flex items-center space-x-2">
+                  {error ? (
+                    <svg
+                      className="w-5 h-5 text-red-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="w-5 h-5 text-green-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24">
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  )}
+                  <span className="font-medium">{message}</span>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Back Button */}
+        <div className="mt-8 text-center">
+          <button
+            onClick={() => router.push("/petani")}
+            className="inline-flex items-center space-x-2 text-gray-700 hover:text-gray-900 font-bold transition-colors duration-200">
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24">
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10 19l-7-7m0 0l7-7m-7 7h18"
+              />
+            </svg>
+            <span>Kembali ke Daftar Petani</span>
+          </button>
+        </div>
       </div>
     </div>
   );
 }
+
+export default EditPetaniPage;
