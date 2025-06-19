@@ -14,12 +14,6 @@ import {
   faBars,
   faTimes,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  faInstagram,
-  faTwitter,
-  faFacebook,
-  faYoutube,
-} from "@fortawesome/free-brands-svg-icons";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import "./globals.css";
