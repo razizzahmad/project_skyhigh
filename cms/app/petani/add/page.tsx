@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation"; // ✅ gunakan ini
 
 export default function AddPetaniPage() {
   const [nama, setNama] = useState("");
@@ -11,6 +12,8 @@ export default function AddPetaniPage() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const router = useRouter(); // ✅ gunakan hook dengan benar
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -18,16 +21,14 @@ export default function AddPetaniPage() {
 
     try {
       const response = await axios.post(`http://localhost:3001/api/petani`, {
-        nama_value: nama,
-        kontak_value: kontak,
-        alamat_value: alamat,
+        nama,
+        kontak,
+        alamat,
       });
 
       if (response.data?.meta_data?.error === 0) {
-        setMessage("Data petani berhasil ditambahkan!");
-        setNama("");
-        setKontak("");
-        setAlamat("");
+        // ✅ Redirect langsung jika sukses
+        router.push("/petani");
       } else {
         setMessage(response.data?.meta_data?.message || "Terjadi kesalahan");
       }
