@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 export default function AddProdukPage() {
   const [nama, setNama] = useState("");
@@ -13,6 +14,8 @@ export default function AddProdukPage() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const router = useRouter();
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -20,21 +23,15 @@ export default function AddProdukPage() {
 
     try {
       const response = await axios.post(`http://localhost:3001/api/produk`, {
-        nama_value: nama,
-        deskripsi_value: deskripsi,
-        harga_value: harga,
-        stok_value: stok,
-        petaniId_value: petaniId,
+        nama,
+        deskripsi,
+        harga,
+        stok,
+        petaniId,
       });
 
       if (response.data?.meta_data?.error === 0) {
-        setMessage("Produk berhasil ditambahkan!");
-        // reset form
-        setNama("");
-        setDeskripsi("");
-        setHarga("");
-        setStok("");
-        setPetaniId("");
+        router.push("/produk"); // ✅ redirect jika berhasil
       } else {
         setMessage(response.data?.meta_data?.message || "Terjadi kesalahan");
       }
@@ -52,12 +49,15 @@ export default function AddProdukPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-4 border rounded shadow">
+    <div className="max-w-md mx-auto mt-10 p-4 border rounded shadow bg-white">
       <h1 className="text-2xl font-semibold mb-4">Tambah Produk Baru</h1>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label>Nama Produk</label>
+          <label htmlFor="nama" className="block font-medium mb-1">
+            Nama Produk
+          </label>
           <input
+            id="nama"
             type="text"
             value={nama}
             onChange={(e) => setNama(e.target.value)}
@@ -66,8 +66,11 @@ export default function AddProdukPage() {
           />
         </div>
         <div>
-          <label>Deskripsi</label>
+          <label htmlFor="deskripsi" className="block font-medium mb-1">
+            Deskripsi
+          </label>
           <textarea
+            id="deskripsi"
             value={deskripsi}
             onChange={(e) => setDeskripsi(e.target.value)}
             className="w-full border px-2 py-1 rounded"
@@ -75,8 +78,11 @@ export default function AddProdukPage() {
           />
         </div>
         <div>
-          <label>Harga</label>
+          <label htmlFor="harga" className="block font-medium mb-1">
+            Harga
+          </label>
           <input
+            id="harga"
             type="number"
             value={harga}
             onChange={(e) => setHarga(e.target.value)}
@@ -86,8 +92,11 @@ export default function AddProdukPage() {
           />
         </div>
         <div>
-          <label>Stok</label>
+          <label htmlFor="stok" className="block font-medium mb-1">
+            Stok
+          </label>
           <input
+            id="stok"
             type="number"
             value={stok}
             onChange={(e) => setStok(e.target.value)}
@@ -97,8 +106,11 @@ export default function AddProdukPage() {
           />
         </div>
         <div>
-          <label>Petani ID</label>
+          <label htmlFor="petaniId" className="block font-medium mb-1">
+            ID Petani
+          </label>
           <input
+            id="petaniId"
             type="number"
             value={petaniId}
             onChange={(e) => setPetaniId(e.target.value)}
@@ -116,7 +128,9 @@ export default function AddProdukPage() {
         </button>
       </form>
 
-      {message && <p className="mt-4 text-center">{message}</p>}
+      {message && (
+        <p className="mt-4 text-center text-sm text-blue-700">{message}</p>
+      )}
     </div>
   );
 }
