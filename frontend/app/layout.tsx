@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "CropMarket Hub",
+  title: "CropMarket hub",
   description: "Platform marketplace untuk hasil pertanian.",
 };
 
@@ -30,7 +30,7 @@ export default function RootLayout({
         <header className="bg-white shadow-md sticky top-0 z-50">
   <div className="max-w-7xl mx-auto px-4 py-3 flex flex-col items-center">
     <Image 
-      src="/images/logo1.png" 
+      src="/logo.png" 
       width={90} 
       height={90} 
       alt="Logo CropMarket Hub" 

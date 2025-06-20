@@ -4,7 +4,6 @@ import Link from "next/link";
 import "./globals.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faUserCircle,
   faChevronLeft,
   faChevronRight,
   faPhone,
@@ -37,24 +36,21 @@ export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 via-green-100 to-white">
       {/* Navbar */}
-      <header className="fixed w-full z-20 flex justify-between items-center px-8 py-4 backdrop-blur bg-white/60 border-b border-gray-200">
-        <h1 className="text-2xl font-bold text-green-700">CropMarket Hub</h1>
-        <div className="relative">
-          <FontAwesomeIcon
-            icon={faUserCircle}
-            className="text-3xl text-green-700 hover:text-green-800 cursor-pointer"
-            onClick={() => setShowLogout((prev) => !prev)}
-          />
-          {showLogout && (
-            <button
-              onClick={handleLogout}
-              className="absolute right-0 mt-2 w-24 bg-white border border-green-700 rounded-lg shadow-lg py-2 text-green-700 font-semibold hover:bg-green-50"
-            >
-              Logout
-            </button>
-          )}
-        </div>
-      </header>
+      {/* Navbar */}
+<header className="fixed w-full z-20 flex justify-between items-center px-8 py-4 backdrop-blur bg-white/60 border-b border-gray-200">
+  <div className="relative">
+    
+    {showLogout && (
+      <button
+        onClick={handleLogout}
+        className="absolute right-0 mt-2 w-24 bg-white border border-green-700 rounded-lg shadow-lg py-2 text-green-700 font-semibold hover:bg-green-50"
+      >
+        Logout
+      </button>
+    )}
+  </div>
+</header>
+
 
       <main className="pt-24 flex flex-col items-center justify-center">
         {/* Hero Section */}
@@ -65,12 +61,22 @@ export default function HomePage() {
           <p className="text-gray-600 text-lg">
             Marketplace untuk produk pertanian segar dari para petani terpercaya.
           </p>
-          <Link
-            href="/produk"
-            className="mt-4 inline-block rounded-full bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 shadow-lg transition"
-          >
-            Jelajahi Sekarang
-          </Link>
+
+          {/* Buttons */}
+          <div className="mt-4 flex space-x-4 justify-center">
+            <Link
+              href="/petani"
+              className="rounded-full bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 shadow-lg transition"
+            >
+              Jelajahi Petani
+            </Link>
+            <Link
+              href="/produk"
+              className="rounded-full bg-lime-600 hover:bg-lime-700 text-white font-semibold px-8 py-3 shadow-lg transition"
+            >
+              Jelajahi Produk
+            </Link>
+          </div>
         </div>
 
         {/* Services Section */}
@@ -82,6 +88,7 @@ export default function HomePage() {
             <h2 className="text-xl font-semibold text-green-700 group-hover:text-green-800">Data Petani</h2>
             <p className="text-gray-500 mt-2">Lihat data para petani terpercaya</p>
           </Link>
+          
           <Link
             href="/produk"
             className="bg-white rounded-2xl p-6 text-center border border-lime-100 hover:border-lime-300 hover:shadow-xl transition group"
