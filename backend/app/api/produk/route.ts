@@ -1,85 +1,106 @@
+// app/api/produk/route.ts
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "http://localhost:3000",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
 
-export const POST = async (request: NextRequest) => {
+// OPTIONS: CORS preflight
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 200,
+    headers: CORS_HEADERS,
+  });
+}
+
+// GET: Ambil semua produk
+export async function GET() {
+  try {
+    const produkList = await prisma.produk.findMany({
+      include: {
+        petani: true,
+      },
+    });
+
+    return NextResponse.json(
+      {
+        meta_data: {
+          error: 0,
+          message: "Data produk berhasil diambil",
+          status: 200,
+        },
+        data_produk: produkList,
+      },
+      {
+        status: 200,
+        headers: CORS_HEADERS,
+      }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        meta_data: {
+          error: 1,
+          message: "Gagal mengambil data produk",
+          status: 500,
+        },
+        data_produk: [],
+      },
+      {
+        status: 500,
+        headers: CORS_HEADERS,
+      }
+    );
+  }
+}
+
+// POST: Tambah produk baru
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { nama_value, deskripsi_value, harga_value, stok_value, petaniId_value } = body;
 
-    // Validasi field kosong
-    if (!nama_value || !deskripsi_value || harga_value === undefined || stok_value === undefined || petaniId_value === undefined) {
-      return NextResponse.json({
-        meta_data: {
-          error: 1,
-          message: "Semua field wajib diisi",
-          status: 400,
-        },
-      }, { status: 400 });
-    }
-
-    // Konversi angka dan validasi
-    const harga = Number(harga_value);
-    const stok = Number(stok_value);
-    const petaniId = Number(petaniId_value);
-
-    if ([harga, stok, petaniId].some(isNaN)) {
-      return NextResponse.json({
-        meta_data: {
-          error: 1,
-          message: "Harga, stok, dan ID petani harus berupa angka valid",
-          status: 400,
-        },
-      }, { status: 400 });
-    }
-
-    // Cek duplikat nama produk untuk petani yang sama
-    const existing = await prisma.produk.findFirst({
-      where: {
-        nama: nama_value,
-        petaniId,
-      },
-    });
-
-    if (existing) {
-      return NextResponse.json({
-        meta_data: {
-          error: 1,
-          message: "Produk sudah terdaftar untuk petani ini",
-          status: 409,
-        },
-      }, { status: 409 });
-    }
-
-    // Simpan ke database
-    const result = await prisma.produk.create({
+    const newProduk = await prisma.produk.create({
       data: {
-        nama: nama_value,
-        deskripsi: deskripsi_value,
-        harga,
-        stok,
-        petaniId,
+        nama: body.nama,
+        deskripsi: body.deskripsi,
+        harga: Number(body.harga),
+        stok: Number(body.stok),
+        petaniId: Number(body.petaniId),
       },
     });
 
-    return NextResponse.json({
-      meta_data: {
-        error: 0,
-        message: "Produk berhasil disimpan",
+    return NextResponse.json(
+      {
+        meta_data: {
+          error: 0,
+          message: "Produk berhasil ditambahkan",
+          status: 201,
+        },
+        data_produk: newProduk,
+      },
+      {
         status: 201,
-      },
-      data: result,
-    }, { status: 201 });
-
+        headers: CORS_HEADERS,
+      }
+    );
   } catch (error) {
-    console.error("POST Produk Error:", error);
-    return NextResponse.json({
-      meta_data: {
-        error: 1,
-        message: "Terjadi kesalahan pada server",
-        status: 500,
+    return NextResponse.json(
+      {
+        meta_data: {
+          error: 1,
+          message: "Gagal menambahkan produk",
+          status: 500,
+        },
+        data_produk: null,
       },
-    }, { status: 500 });
+      {
+        status: 500,
+        headers: CORS_HEADERS,
+      }
+    );
   }
-};
+}
