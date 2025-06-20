@@ -1,6 +1,17 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
+import {
+  Package,
+  DollarSign,
+  Users,
+  FileText,
+  Warehouse,
+  Plus,
+  ArrowLeft,
+} from "lucide-react";
 
 export default function AddProdukPage() {
   const [nama, setNama] = useState("");
@@ -12,353 +23,238 @@ export default function AddProdukPage() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const router = useRouter();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
 
     try {
-      const response = await fetch(`http://localhost:3001/api/produk`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          nama,
-          deskripsi,
-          harga,
-          stok,
-          petaniId,
-        }),
+      const response = await axios.post(`http://localhost:3001/api/produk`, {
+        nama,
+        deskripsi,
+        harga,
+        stok,
+        petaniId,
       });
 
-      const data = await response.json();
-
-      if (data?.meta_data?.error === 0) {
-        window.location.href = "/produk";
+      if (response.data?.meta_data?.error === 0) {
+        setMessage("Produk berhasil ditambahkan!");
+        setTimeout(() => {
+          router.push("/produk");
+        }, 1500);
       } else {
-        setMessage(data?.meta_data?.message || "Terjadi kesalahan");
+        setMessage(response.data?.meta_data?.message || "Terjadi kesalahan");
       }
     } catch (error) {
-      setMessage("Terjadi kesalahan koneksi");
+      if (error.response) {
+        setMessage(
+          error.response.data?.meta_data?.message || "Gagal mengirim data"
+        );
+      } else {
+        setMessage("Terjadi kesalahan koneksi");
+      }
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50 flex items-center justify-center px-4 py-8 relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-emerald-400/20 to-teal-400/20 rounded-full blur-3xl"></div>
-        <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-gradient-to-tr from-cyan-400/20 to-emerald-400/20 rounded-full blur-3xl"></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-r from-teal-300/10 to-emerald-300/10 rounded-full blur-3xl"></div>
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="absolute inset-0 opacity-30">
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%2334d399' fill-opacity='0.03'%3E%3Cpath d='m36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}></div>
       </div>
 
-      <div className="w-full max-w-4xl relative z-10">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-3xl mb-6 shadow-lg shadow-emerald-500/25">
-            <svg
-              className="w-10 h-10 text-white"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-              />
-            </svg>
+      <div className="relative max-w-2xl mx-auto">
+        <div className="text-center mb-10">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-emerald-500 to-green-600 rounded-2xl shadow-lg mb-6 transform hover:scale-105 transition-transform duration-300">
+            <Plus className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-700 via-teal-700 to-cyan-700 bg-clip-text text-transparent mb-3">
+          <h1 className="text-4xl font-bold bg-gradient-to-r from-emerald-600 to-green-700 bg-clip-text text-transparent mb-3">
             Tambah Produk Baru
           </h1>
-          <p className="text-gray-600 text-lg font-medium">
-            Lengkapi informasi produk dengan detail yang akurat
+          <p className="text-gray-600 text-lg">
+            Lengkapi informasi produk untuk menambahkan ke katalog
           </p>
-          <div className="w-24 h-1 bg-gradient-to-r from-emerald-500 to-teal-500 mx-auto mt-4 rounded-full"></div>
         </div>
 
-        {/* Form Container */}
-        <div className="bg-white/80 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
-          <div className="bg-gradient-to-r from-emerald-500/5 via-teal-500/5 to-cyan-500/5 p-1">
-            <div className="bg-white rounded-3xl">
-              <div className="p-10 md:p-12">
-                <div onSubmit={handleSubmit} className="space-y-10">
-                  {/* Nama Produk */}
-                  <div className="group space-y-3">
-                    <label
-                      htmlFor="nama"
-                      className="block text-sm font-semibold text-gray-800 mb-2">
-                      <span className="flex items-center">
-                        <svg
-                          className="w-4 h-4 mr-2 text-emerald-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"
-                          />
-                        </svg>
-                        Nama Produk
-                      </span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        id="nama"
-                        type="text"
-                        value={nama}
-                        onChange={(e) => setNama(e.target.value)}
-                        placeholder="Masukkan nama produk"
-                        className="w-full border-2 border-gray-200 rounded-2xl px-6 py-4 bg-gray-50/50 focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-gray-900 placeholder:text-gray-400 group-hover:border-gray-300"
-                        required
-                      />
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                    </div>
-                  </div>
+        <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-8 sm:p-10 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-emerald-100 to-green-100 rounded-full -translate-y-16 translate-x-16 opacity-50"></div>
+          <div className="absolute bottom-0 left-0 w-24 h-24 bg-gradient-to-tr from-teal-100 to-emerald-100 rounded-full translate-y-12 -translate-x-12 opacity-50"></div>
 
-                  {/* Deskripsi */}
-                  <div className="group space-y-3">
-                    <label
-                      htmlFor="deskripsi"
-                      className="block text-sm font-semibold text-gray-800 mb-2">
-                      <span className="flex items-center">
-                        <svg
-                          className="w-4 h-4 mr-2 text-emerald-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M4 6h16M4 12h16M4 18h7"
-                          />
-                        </svg>
-                        Deskripsi
-                      </span>
-                    </label>
-                    <div className="relative">
-                      <textarea
-                        id="deskripsi"
-                        value={deskripsi}
-                        onChange={(e) => setDeskripsi(e.target.value)}
-                        placeholder="Masukkan deskripsi produk"
-                        className="w-full border-2 border-gray-200 rounded-2xl px-6 py-4 bg-gray-50/50 focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-gray-900 placeholder:text-gray-400 resize-none group-hover:border-gray-300"
-                        rows={5}
-                        required
-                      />
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                    </div>
-                  </div>
-
-                  {/* Harga & Stok */}
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="group space-y-3">
-                      <label
-                        htmlFor="harga"
-                        className="block text-sm font-semibold text-gray-800 mb-2">
-                        <span className="flex items-center">
-                          <svg
-                            className="w-4 h-4 mr-2 text-emerald-600"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"
-                            />
-                          </svg>
-                          Harga
-                        </span>
-                      </label>
-                      <div className="relative">
-                        <span className="absolute left-6 top-1/2 transform -translate-y-1/2 text-emerald-600 font-semibold text-sm z-10">
-                          Rp
-                        </span>
-                        <input
-                          id="harga"
-                          type="number"
-                          value={harga}
-                          onChange={(e) => setHarga(e.target.value)}
-                          placeholder="0"
-                          className="w-full border-2 border-gray-200 rounded-2xl pl-12 pr-6 py-4 bg-gray-50/50 focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-gray-900 placeholder:text-gray-400 group-hover:border-gray-300"
-                          required
-                          min="0"
-                        />
-                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                      </div>
-                    </div>
-
-                    <div className="group space-y-3">
-                      <label
-                        htmlFor="stok"
-                        className="block text-sm font-semibold text-gray-800 mb-2">
-                        <span className="flex items-center">
-                          <svg
-                            className="w-4 h-4 mr-2 text-emerald-600"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24">
-                            <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
-                            />
-                          </svg>
-                          Stok
-                        </span>
-                      </label>
-                      <div className="relative">
-                        <input
-                          id="stok"
-                          type="number"
-                          value={stok}
-                          onChange={(e) => setStok(e.target.value)}
-                          placeholder="0"
-                          className="w-full border-2 border-gray-200 rounded-2xl px-6 pr-16 py-4 bg-gray-50/50 focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-gray-900 placeholder:text-gray-400 group-hover:border-gray-300"
-                          required
-                          min="0"
-                        />
-                        <span className="absolute right-6 top-1/2 transform -translate-y-1/2 text-emerald-600 font-semibold text-sm">
-                          unit
-                        </span>
-                        <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* ID Petani */}
-                  <div className="group space-y-3">
-                    <label
-                      htmlFor="petaniId"
-                      className="block text-sm font-semibold text-gray-800 mb-2">
-                      <span className="flex items-center">
-                        <svg
-                          className="w-4 h-4 mr-2 text-emerald-600"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                          />
-                        </svg>
-                        ID Petani
-                      </span>
-                    </label>
-                    <div className="relative">
-                      <input
-                        id="petaniId"
-                        type="number"
-                        value={petaniId}
-                        onChange={(e) => setPetaniId(e.target.value)}
-                        placeholder="Contoh: 1"
-                        className="w-full border-2 border-gray-200 rounded-2xl px-6 py-4 bg-gray-50/50 focus:outline-none focus:border-emerald-500 focus:bg-white transition-all duration-300 text-gray-900 placeholder:text-gray-400 group-hover:border-gray-300"
-                        required
-                        min="1"
-                      />
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-emerald-500/10 to-teal-500/10 opacity-0 group-focus-within:opacity-100 transition-opacity duration-300 pointer-events-none"></div>
-                    </div>
-                  </div>
-
-                  {/* Submit Button */}
-                  <div className="pt-8">
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="group relative w-full bg-gradient-to-r from-emerald-600 via-teal-600 to-cyan-600 text-white font-bold py-5 px-8 rounded-2xl hover:from-emerald-700 hover:to-cyan-700 focus:outline-none focus:ring-4 focus:ring-emerald-500/30 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed overflow-hidden shadow-xl shadow-emerald-500/25 hover:shadow-2xl hover:shadow-emerald-500/30 transform hover:-translate-y-1">
-                      <div className="absolute inset-0 bg-gradient-to-r from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                      <span className="relative flex items-center justify-center text-lg">
-                        {loading ? (
-                          <>
-                            <div className="animate-spin rounded-full h-6 w-6 border-2 border-white border-t-transparent mr-3"></div>
-                            Menyimpan...
-                          </>
-                        ) : (
-                          <>
-                            <svg
-                              className="w-5 h-5 mr-3"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24">
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M5 13l4 4L19 7"
-                              />
-                            </svg>
-                            Simpan Produk
-                          </>
-                        )}
-                      </span>
-                    </button>
-                  </div>
-                </div>
-
-                {/* Error Message */}
-                {message && (
-                  <div className="mt-8 p-5 bg-gradient-to-r from-red-50 to-pink-50 border-2 border-red-200/50 rounded-2xl backdrop-blur-sm">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0">
-                        <svg
-                          className="w-6 h-6 text-red-500"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24">
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                          />
-                        </svg>
-                      </div>
-                      <div className="ml-3">
-                        <p className="text-sm font-medium text-red-800">
-                          {message}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                )}
+          <div className="relative space-y-8">
+            <div className="group">
+              <label
+                htmlFor="nama"
+                className="flex items-center gap-2 font-semibold text-gray-700 mb-3 text-lg">
+                <Package className="w-5 h-5 text-emerald-600" />
+                Nama Produk
+              </label>
+              <div className="relative">
+                <input
+                  id="nama"
+                  type="text"
+                  value={nama}
+                  onChange={(e) => setNama(e.target.value)}
+                  placeholder="Masukkan nama produk"
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 text-gray-900 placeholder:text-gray-400 text-lg transition-all duration-300 group-hover:border-gray-300"
+                  required
+                />
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-500/0 to-green-500/0 group-focus-within:from-emerald-500/5 group-focus-within:to-green-500/5 pointer-events-none transition-all duration-300"></div>
               </div>
             </div>
+
+            <div className="group">
+              <label
+                htmlFor="deskripsi"
+                className="flex items-center gap-2 font-semibold text-gray-700 mb-3 text-lg">
+                <FileText className="w-5 h-5 text-emerald-600" />
+                Deskripsi
+              </label>
+              <div className="relative">
+                <textarea
+                  id="deskripsi"
+                  value={deskripsi}
+                  onChange={(e) => setDeskripsi(e.target.value)}
+                  placeholder="Masukkan deskripsi produk"
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 text-gray-900 placeholder:text-gray-400 text-lg transition-all duration-300 group-hover:border-gray-300 resize-none"
+                  rows={4}
+                  required
+                />
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-500/0 to-green-500/0 group-focus-within:from-emerald-500/5 group-focus-within:to-green-500/5 pointer-events-none transition-all duration-300"></div>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="group">
+                <label
+                  htmlFor="harga"
+                  className="flex items-center gap-2 font-semibold text-gray-700 mb-3 text-lg">
+                  <DollarSign className="w-5 h-5 text-emerald-600" />
+                  Harga
+                </label>
+                <div className="relative">
+                  <input
+                    id="harga"
+                    type="number"
+                    value={harga}
+                    onChange={(e) => setHarga(e.target.value)}
+                    placeholder="0"
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 text-gray-900 placeholder:text-gray-400 text-lg transition-all duration-300 group-hover:border-gray-300"
+                    required
+                    min="0"
+                  />
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-500/0 to-green-500/0 group-focus-within:from-emerald-500/5 group-focus-within:to-green-500/5 pointer-events-none transition-all duration-300"></div>
+                </div>
+              </div>
+
+              <div className="group">
+                <label
+                  htmlFor="stok"
+                  className="flex items-center gap-2 font-semibold text-gray-700 mb-3 text-lg">
+                  <Warehouse className="w-5 h-5 text-emerald-600" />
+                  Stok
+                </label>
+                <div className="relative">
+                  <input
+                    id="stok"
+                    type="number"
+                    value={stok}
+                    onChange={(e) => setStok(e.target.value)}
+                    placeholder="0"
+                    className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 text-gray-900 placeholder:text-gray-400 text-lg transition-all duration-300 group-hover:border-gray-300"
+                    required
+                    min="0"
+                  />
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-500/0 to-green-500/0 group-focus-within:from-emerald-500/5 group-focus-within:to-green-500/5 pointer-events-none transition-all duration-300"></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="group">
+              <label
+                htmlFor="petaniId"
+                className="flex items-center gap-2 font-semibold text-gray-700 mb-3 text-lg">
+                <Users className="w-5 h-5 text-emerald-600" />
+                ID Petani
+              </label>
+              <div className="relative">
+                <input
+                  id="petaniId"
+                  type="number"
+                  value={petaniId}
+                  onChange={(e) => setPetaniId(e.target.value)}
+                  placeholder="Contoh: 1"
+                  className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:border-emerald-500 focus:ring-4 focus:ring-emerald-100 text-gray-900 placeholder:text-gray-400 text-lg transition-all duration-300 group-hover:border-gray-300"
+                  required
+                  min="1"
+                />
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-emerald-500/0 to-green-500/0 group-focus-within:from-emerald-500/5 group-focus-within:to-green-500/5 pointer-events-none transition-all duration-300"></div>
+              </div>
+            </div>
+
+            <div className="pt-4">
+              <button
+                type="button"
+                disabled={loading}
+                onClick={handleSubmit}
+                className="w-full bg-gradient-to-r from-emerald-600 to-green-600 hover:from-emerald-700 hover:to-green-700 text-white font-bold py-4 px-6 rounded-xl shadow-lg hover:shadow-xl transform hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none text-lg relative overflow-hidden group">
+                <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-green-400 opacity-0 group-hover:opacity-20 transition-opacity duration-300"></div>
+                <div className="relative flex items-center justify-center gap-3">
+                  {loading ? (
+                    <>
+                      <div className="w-6 h-6 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      Menyimpan...
+                    </>
+                  ) : (
+                    <>
+                      <Plus className="w-6 h-6" />
+                      Simpan Produk
+                    </>
+                  )}
+                </div>
+              </button>
+            </div>
           </div>
+
+          {message && (
+            <div
+              className={`mt-6 p-4 rounded-xl border-l-4 ${
+                message.includes("berhasil")
+                  ? "bg-emerald-50 border-emerald-500 text-emerald-800"
+                  : "bg-red-50 border-red-500 text-red-800"
+              } transform transition-all duration-300`}>
+              <div className="flex items-center gap-2">
+                {message.includes("berhasil") ? (
+                  <div className="w-5 h-5 bg-emerald-500 rounded-full flex items-center justify-center">
+                    <div className="w-2 h-2 bg-white rounded-full"></div>
+                  </div>
+                ) : (
+                  <div className="w-5 h-5 bg-red-500 rounded-full flex items-center justify-center">
+                    <div className="w-3 h-0.5 bg-white rounded-full"></div>
+                  </div>
+                )}
+                <p className="font-semibold">{message}</p>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Footer */}
-        <div className="text-center mt-10">
-          <div className="inline-flex items-center px-6 py-3 bg-white/60 backdrop-blur-sm rounded-full border border-white/30">
-            <svg
-              className="w-4 h-4 text-emerald-600 mr-2"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-              />
-            </svg>
-            <p className="text-gray-700 text-sm font-medium">
-              Pastikan semua informasi telah diisi dengan benar
-            </p>
-          </div>
+        <div className="mt-8 text-center">
+          <button
+            onClick={() => router.push("/produk")}
+            className="inline-flex items-center gap-2 text-emerald-600 hover:text-emerald-700 font-semibold transition-colors duration-300 group">
+            <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-300" />
+            Kembali ke Daftar Produk
+          </button>
         </div>
       </div>
     </div>
   );
 }
+
