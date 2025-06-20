@@ -2,86 +2,71 @@ import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "http://localhost:3000",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
 
-// Service GET: Ambil semua data petani beserta produk-produk mereka (optional)
-export const GET = async () => {
+// Preflight request handler
+export async function OPTIONS() {
+  return new Response(null, {
+    status: 200,
+    headers: CORS_HEADERS,
+  });
+}
+
+// GET: Ambil semua petani
+export async function GET() {
   try {
-    const data = await prisma.petani.findMany({
+    const petaniList = await prisma.petani.findMany({
       include: {
-        produk: true, // kalau mau ambil produk-produk yang terkait, bisa diaktifkan
+        produk: true,
       },
     });
-
-    if (data.length === 0) {
-      return NextResponse.json(
-        {
-          meta_data: {
-            error: 1,
-            message: "Data Petani Tidak Ditemukan",
-            status: 404,
-          },
-        },
-        { status: 404 }
-      );
-    }
 
     return NextResponse.json(
       {
         meta_data: {
           error: 0,
-          message: null,
+          message: "Data petani berhasil diambil",
           status: 200,
         },
-        data_user: data,
+        data_petani: petaniList,
       },
-      { status: 200 }
+      {
+        status: 200,
+        headers: CORS_HEADERS,
+      }
     );
   } catch (error) {
     return NextResponse.json(
       {
         meta_data: {
           error: 1,
-          message: "Terjadi kesalahan saat mengambil data",
+          message: "Gagal mengambil data petani",
           status: 500,
         },
+        data_petani: [],
       },
-      { status: 500 }
+      {
+        status: 500,
+        headers: CORS_HEADERS,
+      }
     );
   }
-};
+}
 
-// Service POST: Tambah data petani baru (hanya untuk data petani, tanpa produk)
-export const POST = async (request: NextRequest) => {
+// POST: Tambah data petani
+export async function POST(request: NextRequest) {
   try {
-    const { nama_value, kontak_value, alamat_value } = await request.json();
+    const body = await request.json();
 
-    // Cek apakah petani sudah ada berdasarkan nama dan kontak (bisa disesuaikan)
-    const checkUser = await prisma.petani.findFirst({
-      where: {
-        nama: nama_value,
-        kontak: kontak_value,
-      },
-    });
-
-    if (checkUser) {
-      return NextResponse.json(
-        {
-          meta_data: {
-            error: 1,
-            message: "Data Gagal Disimpan! Petani Sudah Terdaftar",
-            status: 409,
-          },
-        },
-        { status: 409 }
-      );
-    }
-
-    // Simpan data petani baru
-    const save = await prisma.petani.create({
+    const petani = await prisma.petani.create({
       data: {
-        nama: nama_value,
-        kontak: kontak_value,
-        alamat: alamat_value,
+        nama: body.nama,
+        kontak: body.kontak,
+        alamat: body.alamat,
       },
     });
 
@@ -89,23 +74,29 @@ export const POST = async (request: NextRequest) => {
       {
         meta_data: {
           error: 0,
-          message: "Data Petani Berhasil Disimpan",
+          message: "Data petani berhasil ditambahkan",
           status: 201,
         },
-        data_user: save,
+        data_petani: petani,
       },
-      { status: 201 }
+      {
+        status: 201,
+        headers: CORS_HEADERS,
+      }
     );
   } catch (error) {
     return NextResponse.json(
       {
         meta_data: {
           error: 1,
-          message: "Terjadi kesalahan saat menyimpan data",
+          message: "Gagal menambahkan data",
           status: 500,
         },
       },
-      { status: 500 }
+      {
+        status: 500,
+        headers: CORS_HEADERS,
+      }
     );
   }
-};
+}
