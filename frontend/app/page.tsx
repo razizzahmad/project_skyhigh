@@ -60,7 +60,7 @@ export default function HomePage() {
         {/* Hero Section */}
         <div className="text-center space-y-4 max-w-2xl">
           <h2 className="text-4xl font-extrabold text-green-800 drop-shadow">
-            Selamat Datang di CropMarket Hub 🌱
+            Selamat Datang User 🌱
           </h2>
           <p className="text-gray-600 text-lg">
             Marketplace untuk produk pertanian segar dari para petani terpercaya.

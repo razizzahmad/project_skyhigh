@@ -18,12 +18,12 @@ export default function PetaniPage() {
       mutate();
     }
   };
-
+  
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-100 via-green-50 to-white p-6 flex flex-col items-center justify-center">
       <div className="w-full max-w-6xl bg-white p-6 rounded-2xl shadow-lg border border-green-200">
         <h1 className="text-3xl md:text-4xl font-extrabold text-green-700 text-center mb-8">
-          📦 Data Petani
+          👩‍🌾 Data Petani
         </h1>
 
         <div className="overflow-x-auto rounded-xl border border-gray-200">
@@ -33,12 +33,13 @@ export default function PetaniPage() {
                 <th>Nama</th>
                 <th>Kontak</th>
                 <th>Alamat</th>
+                <th>Aksi</th>
               </tr>
             </thead>
             <tbody className="text-center">
               {data?.meta_data?.error === 1 ? (
                 <tr>
-                  <td colSpan={6} className="text-center text-red-500 py-4">
+                  <td colSpan={4} className="text-center text-red-500 py-4">
                     {data.meta_data.message}
                   </td>
                 </tr>
@@ -48,9 +49,30 @@ export default function PetaniPage() {
                     <td>{item.nama}</td>
                     <td>{item.kontak}</td>
                     <td>{item.alamat}</td>
-                    <td></td>
+                    <td>
+                      <button
+                        onClick={() => deletePetani(item.id)}
+                        className="bg-red-500 hover:bg-red-600 text-white rounded-lg px-3 py-1 text-sm"
+                      >
+                        Hapus
+                      </button>
+                    </td>
                   </tr>
                 ))
+              )}
+              {!data && !error && (
+                <tr>
+                  <td colSpan={4} className="py-4 text-gray-500">
+                    Memuat data...
+                  </td>
+                </tr>
+              )}
+              {error && (
+                <tr>
+                  <td colSpan={4} className="text-center text-red-500 py-4">
+                    Terjadi kesalahan saat memuat data.
+                  </td>
+                </tr>
               )}
             </tbody>
           </table>
