@@ -1,268 +1,173 @@
+// app/api/produk/[id]/route.ts
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
-export const DELETE = async (
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) => {
-  try {
-    const id = Number(params.id);
-    if (isNaN(id)) {
-      return NextResponse.json(
-        {
-          meta_data: {
-            error: 1,
-            message: "Parameter ID harus berupa angka yang valid",
-            status: 400,
-          },
-        },
-        { status: 400 }
-      );
-    }
+// OPTIONS method (CORS preflight support)
+export async function OPTIONS() {
+  return NextResponse.json({}, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "http://localhost:3000",
+      "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    },
+  });
+}
 
-    const produk = await prisma.produk.findUnique({
-      where: { id },
-    });
+// GET /api/produk/[id]
+export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+  const id = Number(params.id);
 
-    if (!produk) {
-      return NextResponse.json(
-        {
-          meta_data: {
-            error: 1,
-            message: "Data produk tidak ditemukan",
-            status: 404,
-          },
-        },
-        { status: 404 }
-      );
-    }
-
-    await prisma.produk.delete({
-      where: { id },
-    });
-
+  if (isNaN(id)) {
     return NextResponse.json(
       {
-        meta_data: {
-          error: 0,
-          message: "Data produk berhasil dihapus",
-          status: 200,
-        },
+        meta_data: { error: 1, message: "ID tidak valid", status: 400 },
+        data_produk: null,
       },
-      { status: 200 }
-    );
-  } catch (error) {
-    return NextResponse.json(
       {
-        meta_data: {
-          error: 1,
-          message: "Terjadi kesalahan server saat menghapus produk",
-          status: 500,
-        },
-      },
-      { status: 500 }
+        status: 400,
+        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+      }
     );
   }
-};
 
-export const GET = async (
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) => {
   try {
-    const id = Number(params.id);
-    if (isNaN(id)) {
-      return NextResponse.json(
-        {
-          meta_data: {
-            error: 1,
-            message: "Parameter ID harus berupa angka yang valid",
-            status: 400,
-          },
-        },
-        { status: 400 }
-      );
-    }
-
     const produk = await prisma.produk.findUnique({
       where: { id },
+      include: {
+        petani: true,
+      },
     });
 
     if (!produk) {
       return NextResponse.json(
         {
-          meta_data: {
-            error: 1,
-            message: "Data produk tidak ditemukan",
-            status: 404,
-          },
+          meta_data: { error: 1, message: "Produk tidak ditemukan", status: 404 },
+          data_produk: null,
         },
-        { status: 404 }
+        {
+          status: 404,
+          headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+        }
       );
     }
 
     return NextResponse.json(
       {
-        meta_data: {
-          error: 0,
-          message: null,
-          status: 200,
-        },
+        meta_data: { error: 0, message: "Sukses mengambil data", status: 200 },
         data_produk: produk,
       },
-      { status: 200 }
+      {
+        status: 200,
+        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+      }
     );
   } catch (error) {
     return NextResponse.json(
       {
-        meta_data: {
-          error: 1,
-          message: "Terjadi kesalahan server saat mengambil data produk",
-          status: 500,
-        },
+        meta_data: { error: 1, message: "Gagal mengambil data produk", status: 500 },
+        data_produk: null,
       },
-      { status: 500 }
+      {
+        status: 500,
+        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+      }
     );
   }
-};
+}
 
-export const PUT = async (
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) => {
-  try {
-    const id = Number(params.id);
-    if (isNaN(id)) {
-      return NextResponse.json(
-        {
-          meta_data: {
-            error: 1,
-            message: "Parameter ID harus berupa angka yang valid",
-            status: 400,
-          },
-        },
-        { status: 400 }
-      );
-    }
+// PUT /api/produk/[id]
+export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+  const id = Number(params.id);
 
-    const produk = await prisma.produk.findUnique({
-      where: { id },
-    });
-
-    if (!produk) {
-      return NextResponse.json(
-        {
-          meta_data: {
-            error: 1,
-            message: "Data produk tidak ditemukan",
-            status: 404,
-          },
-        },
-        { status: 404 }
-      );
-    }
-
-    const {
-      nama_value,
-      deskripsi_value,
-      harga_value,
-      stok_value,
-      petaniId_value,
-    } = await request.json();
-
-    // Validasi sederhana
-    if (
-      !nama_value ||
-      !deskripsi_value ||
-      harga_value === undefined ||
-      stok_value === undefined ||
-      petaniId_value === undefined
-    ) {
-      return NextResponse.json(
-        {
-          meta_data: {
-            error: 1,
-            message: "Semua field harus diisi",
-            status: 400,
-          },
-        },
-        { status: 400 }
-      );
-    }
-
-    const hargaNum = Number(harga_value);
-    const stokNum = Number(stok_value);
-    const petaniIdNum = Number(petaniId_value);
-
-    if (isNaN(hargaNum) || isNaN(stokNum) || isNaN(petaniIdNum)) {
-      return NextResponse.json(
-        {
-          meta_data: {
-            error: 1,
-            message: "Harga, stok, dan petaniId harus berupa angka valid",
-            status: 400,
-          },
-        },
-        { status: 400 }
-      );
-    }
-
-    // Cek duplikat nama produk untuk petani lain (kecuali data yang diedit)
-    const duplicateProduk = await prisma.produk.findFirst({
-      where: {
-        nama: nama_value,
-        petaniId: petaniIdNum,
-        NOT: { id },
+  if (isNaN(id)) {
+    return NextResponse.json(
+      {
+        meta_data: { error: 1, message: "ID tidak valid", status: 400 },
       },
-    });
+      {
+        status: 400,
+        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+      }
+    );
+  }
 
-    if (duplicateProduk) {
-      return NextResponse.json(
-        {
-          meta_data: {
-            error: 1,
-            message: "Produk dengan nama dan petani yang sama sudah ada",
-            status: 409,
-          },
-        },
-        { status: 409 }
-      );
-    }
+  try {
+    const body = await request.json();
 
-    const updatedProduk = await prisma.produk.update({
+    const updated = await prisma.produk.update({
       where: { id },
       data: {
-        nama: nama_value,
-        deskripsi: deskripsi_value,
-        harga: hargaNum,
-        stok: stokNum,
-        petaniId: petaniIdNum,
+        nama: body.nama,
+        deskripsi: body.deskripsi,
+        harga: Number(body.harga),
+        stok: Number(body.stok),
+        petaniId: Number(body.petaniId),
       },
     });
 
     return NextResponse.json(
       {
-        meta_data: {
-          error: 0,
-          message: "Data produk berhasil diubah",
-          status: 200,
-        },
-        data_produk: updatedProduk,
+        meta_data: { error: 0, message: "Produk diperbarui", status: 200 },
+        data_produk: updated,
       },
-      { status: 200 }
+      {
+        status: 200,
+        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+      }
     );
   } catch (error) {
     return NextResponse.json(
       {
-        meta_data: {
-          error: 1,
-          message: "Terjadi kesalahan server saat mengubah produk",
-          status: 500,
-        },
+        meta_data: { error: 1, message: "Gagal memperbarui produk", status: 500 },
       },
-      { status: 500 }
+      {
+        status: 500,
+        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+      }
     );
   }
-};
+}
+
+// DELETE /api/produk/[id]
+export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+  const id = Number(params.id);
+
+  if (isNaN(id)) {
+    return NextResponse.json(
+      {
+        meta_data: { error: 1, message: "ID tidak valid", status: 400 },
+      },
+      {
+        status: 400,
+        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+      }
+    );
+  }
+
+  try {
+    await prisma.produk.delete({ where: { id } });
+
+    return NextResponse.json(
+      {
+        meta_data: { error: 0, message: "Produk dihapus", status: 200 },
+      },
+      {
+        status: 200,
+        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+      }
+    );
+  } catch (error) {
+    return NextResponse.json(
+      {
+        meta_data: { error: 1, message: "Gagal menghapus produk", status: 500 },
+      },
+      {
+        status: 500,
+        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+      }
+    );
+  }
+}
