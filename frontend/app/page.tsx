@@ -92,11 +92,11 @@ export default function HomePage() {
         <footer className="mt-24 text-gray-600 space-y-4 border-t border-gray-300 pt-8 text-center">
           <div className="flex justify-center items-center gap-3">
             <FontAwesomeIcon icon={faPhone} />
-            <span>+62 812 3456 7890</span>
+            <span>+62 123-456-789</span>
           </div>
           <div className="flex justify-center items-center gap-3">
             <FontAwesomeIcon icon={faEnvelope} />
-            <span>support@cropmarkethub.id</span>
+            <span>cropmarkethub@gmail.com</span>
           </div>
           <div>Senin - Jumat: 08:00 - 17:00</div>
           <div>Jl. Pagar Alam, Gg. Ulangan, Segala Mider, Tanjung Karang Barat</div>
