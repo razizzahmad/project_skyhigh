@@ -24,37 +24,31 @@ export default function HomePage() {
 
   const scroll = (direction: "left" | "right") => {
     if (scrollRef.current) {
-      const scrollAmount = 300;
       scrollRef.current.scrollBy({
-        left: direction === "left" ? -scrollAmount : scrollAmount,
+        left: direction === "left" ? -300 : 300,
         behavior: "smooth",
       });
     }
   };
-
   const handleLogout = () => {
     alert("Logout berhasil!");
     setShowLogout(false);
   };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-100 via-green-50 to-white">
-      {/* Header */}
-      <header className="w-full px-6 py-4 flex justify-between items-center relative">
-        <h1 className="text-2xl font-bold text-green-700"></h1>
+    <div className="min-h-screen bg-gradient-to-b from-green-50 via-green-100 to-white">
+      {/* Navbar */}
+      <header className="fixed w-full z-20 flex justify-between items-center px-8 py-4 backdrop-blur bg-white/60 border-b border-gray-200">
+        <h1 className="text-2xl font-bold text-green-700">CropMarket Hub</h1>
         <div className="relative">
-          <span title="Profil">
-            <FontAwesomeIcon
-              icon={faUserCircle}
-              className="text-3xl text-green-700 hover:text-green-900 transition cursor-pointer"
-              onClick={() => setShowLogout((prev) => !prev)}
-            />
-          </span>
-
+          <FontAwesomeIcon
+            icon={faUserCircle}
+            className="text-3xl text-green-700 hover:text-green-800 cursor-pointer"
+            onClick={() => setShowLogout((prev) => !prev)}
+          />
           {showLogout && (
             <button
               onClick={handleLogout}
-              className="absolute right-0 mt-2 w-24 bg-white border border-green-700 rounded-md shadow-md py-2 text-green-700 font-semibold hover:bg-green-50 transition"
+              className="absolute right-0 mt-2 w-24 bg-white border border-green-700 rounded-lg shadow-lg py-2 text-green-700 font-semibold hover:bg-green-50"
             >
               Logout
             </button>
@@ -62,45 +56,52 @@ export default function HomePage() {
         </div>
       </header>
 
-      {/* Konten Utama */}
-      <main className="p-6 flex flex-col items-center justify-center">
-        <div className="text-4xl md:text-5xl font-extrabold text-green-700 mb-10 drop-shadow-md text-center">
-          Selamat Datang di CropMarket Hub 🌾
-        </div>
-
-        <div className="w-full max-w-md space-y-6 mb-12">
-          <Link href="/petani">
-            <div className="bg-white shadow-xl hover:shadow-green-300 transition rounded-2xl p-5 text-center border border-green-200 hover:bg-green-50">
-              <h2 className="text-lg font-semibold text-green-700">Data Petani</h2>
-              <p className="text-sm text-gray-500">Lihat data petani</p>
-            </div>
-          </Link>
-
-          <Link href="/produk">
-            <div className="bg-white shadow-xl hover:shadow-lime-300 transition rounded-2xl p-5 text-center border border-lime-200 hover:bg-lime-50">
-              <h2 className="text-lg font-semibold text-lime-700">Data Produk</h2>
-              <p className="text-sm text-gray-500">Lihat produk hasil pertanian</p>
-            </div>
+      <main className="pt-24 flex flex-col items-center justify-center">
+        {/* Hero Section */}
+        <div className="text-center space-y-4 max-w-2xl">
+          <h2 className="text-4xl font-extrabold text-green-800 drop-shadow">
+            Selamat Datang di CropMarket Hub 🌱
+          </h2>
+          <p className="text-gray-600 text-lg">
+            Marketplace untuk produk pertanian segar dari para petani terpercaya.
+          </p>
+          <Link
+            href="/produk"
+            className="mt-4 inline-block rounded-full bg-green-600 hover:bg-green-700 text-white font-semibold px-8 py-3 shadow-lg transition"
+          >
+            Jelajahi Sekarang
           </Link>
         </div>
 
-        {/* Review Carousel */}
-        <section className="w-full px-4">
-          <h3 className="text-2xl font-bold text-green-800 mb-4 text-center">Apa Kata Pelanggan?</h3>
+        {/* Services Section */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-16 max-w-3xl w-full px-4">
+          <Link
+            href="/petani"
+            className="bg-white rounded-2xl p-6 text-center border border-green-100 hover:border-green-300 hover:shadow-xl transition group"
+          >
+            <h2 className="text-xl font-semibold text-green-700 group-hover:text-green-800">Data Petani</h2>
+            <p className="text-gray-500 mt-2">Lihat data para petani terpercaya</p>
+          </Link>
+          <Link
+            href="/produk"
+            className="bg-white rounded-2xl p-6 text-center border border-lime-100 hover:border-lime-300 hover:shadow-xl transition group"
+          >
+            <h2 className="text-xl font-semibold text-lime-700 group-hover:text-lime-800">Data Produk</h2>
+            <p className="text-gray-500 mt-2">Temukan produk pertanian terbaik</p>
+          </Link>
+        </div>
 
-          <div className="relative">
+        {/* Testimonial Section */}
+        <section className="w-full mt-20 max-w-5xl px-4">
+          <h3 className="text-2xl font-bold text-green-800 text-center">Apa Kata Pelanggan?</h3>
+          <div className="relative mt-8">
             <button
               onClick={() => scroll("left")}
-              className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-green-100 hover:bg-green-300 text-green-800 p-2 rounded-full shadow z-10"
-              aria-label="Scroll Kiri"
+              className="absolute left-0 top-1/2 -translate-y-1/2 bg-green-100 hover:bg-green-300 text-green-800 p-2 rounded-full shadow z-10"
             >
               <FontAwesomeIcon icon={faChevronLeft} />
             </button>
-
-            <div
-              ref={scrollRef}
-              className="flex space-x-4 overflow-x-hidden scroll-smooth pb-4 mx-10"
-            >
+            <div ref={scrollRef} className="flex space-x-6 overflow-x-auto scrollbar-hide scroll-smooth p-4">
               {[
                 {
                   name: "Budi Santoso",
@@ -116,23 +117,21 @@ export default function HomePage() {
                 },
                 {
                   name: "Lestari Dewi",
-                  review: "Suka banget sama tampilannya yang mudah dipakai dan informatif.",
+                  review: "Suka banget dengan tampilannya yang mudah digunakan dan informatif.",
                 },
               ].map((item, idx) => (
                 <div
                   key={idx}
-                  className="min-w-[250px] bg-white rounded-xl shadow-lg p-4 border border-green-100 flex-shrink-0"
+                  className="min-w-[250px] bg-white rounded-2xl shadow-lg p-6 border border-green-100 flex-shrink-0 hover:shadow-2xl hover:border-green-300 transition"
                 >
-                  <p className="text-gray-700 italic mb-2">"{item.review}"</p>
-                  <p className="text-green-700 font-semibold text-right">- {item.name}</p>
+                  <p className="text-gray-600 italic">"{item.review}"</p>
+                  <p className="text-green-700 font-bold text-right mt-2">- {item.name}</p>
                 </div>
               ))}
             </div>
-
             <button
               onClick={() => scroll("right")}
-              className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-green-100 hover:bg-green-300 text-green-800 p-2 rounded-full shadow z-10"
-              aria-label="Scroll Kanan"
+              className="absolute right-0 top-1/2 -translate-y-1/2 bg-green-100 hover:bg-green-300 text-green-800 p-2 rounded-full shadow z-10"
             >
               <FontAwesomeIcon icon={faChevronRight} />
             </button>
@@ -140,7 +139,7 @@ export default function HomePage() {
         </section>
 
         {/* Footer */}
-        <footer className="mt-16 text-center text-green-700 space-y-4">
+        <footer className="mt-20 text-green-700 space-y-4 border-t border-gray-200 pt-8 text-center">
           <div className="flex justify-center items-center gap-2">
             <FontAwesomeIcon icon={faPhone} />
             <span>+62 812 3456 7890</span>
@@ -150,49 +149,42 @@ export default function HomePage() {
             <span>support@cropmarkethub.id</span>
           </div>
           <div className="flex justify-center items-center gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-green-700"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M12 8c1.104 0 2-.896 2-2s-.896-2-2-2-2 .896-2 2 .896 2 2 2zm0 8c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"
-              />
-            </svg>
             <span>Senin - Jumat: 08:00 - 17:00</span>
           </div>
           <div className="flex justify-center items-center gap-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-green-700"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M5.05 3.05a7 7 0 119.9 9.9l-4.95 4.95a.7.7 0 01-.99 0l-4.95-4.95a7 7 0 010-9.9zM10 11a3 3 0 100-6 3 3 0 000 6z"
-                clipRule="evenodd"
-              />
-            </svg>
-            <span>Jl.Pagar Alam,Gg.Ulangan,Segala Mider,Tanjung Karang Barat</span>
+            <span>Jl. Pagar Alam, Gg. Ulangan, Segala Mider, Tanjung Karang Barat</span>
           </div>
-
           <div className="flex justify-center space-x-6 mt-4 text-2xl">
-            <a href="https://instagram.com/cropmarkethub" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="hover:text-pink-600 transition">
+            <a
+              href="https://instagram.com/cropmarkethub"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-pink-600 transition"
+            >
               <FontAwesomeIcon icon={faInstagram} />
             </a>
-            <a href="https://twitter.com/cropmarkethub" target="_blank" rel="noopener noreferrer" aria-label="Twitter" className="hover:text-blue-400 transition">
+            <a
+              href="https://twitter.com/cropmarkethub"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-blue-400 transition"
+            >
               <FontAwesomeIcon icon={faTwitter} />
             </a>
-            <a href="https://facebook.com/cropmarkethub" target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="hover:text-blue-700 transition">
+            <a
+              href="https://facebook.com/cropmarkethub"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-blue-700 transition"
+            >
               <FontAwesomeIcon icon={faFacebook} />
             </a>
-            <a href="https://youtube.com/cropmarkethub" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="hover:text-red-600 transition">
+            <a
+              href="https://youtube.com/cropmarkethub"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-red-600 transition"
+            >
               <FontAwesomeIcon icon={faYoutube} />
             </a>
           </div>
