@@ -71,18 +71,29 @@ export default function HomePage() {
             <button onClick={() => scroll("left")} className="absolute left-0 top-1/2 -translate-y-1/2 bg-emerald-100 p-3 rounded-full shadow-lg hover:bg-emerald-300 z-10">
               <FontAwesomeIcon icon={faChevronLeft} />
             </button>
-            <div ref={scrollRef} className="flex space-x-6 overflow-x-auto scrollbar-hide scroll-smooth p-4">
-              {[{ name: "Budi Santoso", review: "Produk sangat segar dan pengirimannya cepat!" },
-                { name: "Siti Aminah", review: "Kualitas pertanian luar biasa dari CropMarket Hub." },
-                { name: "Andi Wijaya", review: "Layanan cepat dan harga bersaing!" },
-                { name: "Lestari Dewi", review: "Suka banget dengan kemudahan berbelanja produk tani!" }
-              ].map((item, idx) => (
-                <div key={idx} className="min-w-[250px] bg-white rounded-2xl shadow-lg p-6 border border-emerald-100 hover:border-emerald-300 hover:shadow-2xl hover:-translate-y-1 transition">
-                  <p className="text-gray-600 italic">"{item.review}"</p>
-                  <p className="text-emerald-700 font-bold text-right mt-2">- {item.name}</p>
-                </div>
-              ))}
-            </div>
+           <div ref={scrollRef} className="flex space-x-6 overflow-x-auto scrollbar-hide scroll-smooth p-4">
+  {[
+    { name: "Budi Santoso", review: "Produk sangat segar dan pengirimannya cepat!" },
+    { name: "Siti Aminah", review: "Kualitas pertanian luar biasa dari CropMarket Hub." },
+    { name: "Andi Wijaya", review: "Layanan cepat dan harga bersaing!" },
+    { name: "Lestari Dewi", review: "Suka banget dengan kemudahan berbelanja produk tani!" },
+    { name: "Rani Putri", review: "Pilihan produk lengkap dan segar, sangat memuaskan!" },
+    { name: "Agus Supriadi", review: "Pengiriman sesuai estimasi, pelayanan ramah." },
+    { name: "Dina Lestari", review: "Kualitas produk tak pernah mengecewakan, selalu segar!" },
+    { name: "Hendra Pratama", review: "Proses pembelian mudah dan cepat. Rekomendasi banget!" },
+    { name: "Maya Saraswati", review: "Kemasan rapi dan produk datang dengan kualitas terbaik." },
+    { name: "Fahmi Akbar", review: "Platform yang memudahkan mendapatkan produk pertanian dari petani terpercaya." }
+  ].map((item, idx) => (
+    <div
+      key={idx}
+      className="min-w-[250px] bg-white rounded-2xl shadow-lg p-6 border border-emerald-100 hover:border-emerald-300 hover:shadow-2xl hover:-translate-y-1 transition"
+    >
+      <p className="text-gray-600 italic">"{item.review}"</p>
+      <p className="text-emerald-700 font-bold text-right mt-2">- {item.name}</p>
+    </div>
+  ))}
+</div>
+
             <button onClick={() => scroll("right")} className="absolute right-0 top-1/2 -translate-y-1/2 bg-emerald-100 p-3 rounded-full shadow-lg hover:bg-emerald-300 z-10">
               <FontAwesomeIcon icon={faChevronRight} />
             </button>
