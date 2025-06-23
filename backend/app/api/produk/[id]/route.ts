@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "http://localhost:3000",
-  "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
@@ -28,7 +28,11 @@ export async function GET(
   if (isNaN(id)) {
     return NextResponse.json(
       {
-        meta_data: { error: 1, message: "ID tidak valid", status: 400 },
+        meta_data: {
+          error: 1,
+          message: "ID tidak valid",
+          status: 400,
+        },
         data_produk: null,
       },
       {
@@ -47,7 +51,11 @@ export async function GET(
     if (!produk) {
       return NextResponse.json(
         {
-          meta_data: { error: 1, message: "Produk tidak ditemukan", status: 404 },
+          meta_data: {
+            error: 1,
+            message: "Produk tidak ditemukan",
+            status: 404,
+          },
           data_produk: null,
         },
         {
@@ -59,7 +67,11 @@ export async function GET(
 
     return NextResponse.json(
       {
-        meta_data: { error: 0, message: "Sukses mengambil data", status: 200 },
+        meta_data: {
+          error: 0,
+          message: "Sukses mengambil data",
+          status: 200,
+        },
         data_produk: produk,
       },
       {
@@ -70,7 +82,11 @@ export async function GET(
   } catch (error) {
     return NextResponse.json(
       {
-        meta_data: { error: 1, message: "Gagal mengambil data produk", status: 500 },
+        meta_data: {
+          error: 1,
+          message: "Gagal mengambil data produk",
+          status: 500,
+        },
         data_produk: null,
       },
       {
@@ -91,7 +107,11 @@ export async function PUT(
   if (isNaN(id)) {
     return NextResponse.json(
       {
-        meta_data: { error: 1, message: "ID tidak valid", status: 400 },
+        meta_data: {
+          error: 1,
+          message: "ID tidak valid",
+          status: 400,
+        },
       },
       {
         status: 400,
@@ -116,7 +136,11 @@ export async function PUT(
 
     return NextResponse.json(
       {
-        meta_data: { error: 0, message: "Produk diperbarui", status: 200 },
+        meta_data: {
+          error: 0,
+          message: "Produk diperbarui",
+          status: 200,
+        },
         data_produk: updated,
       },
       {
@@ -127,7 +151,11 @@ export async function PUT(
   } catch (error) {
     return NextResponse.json(
       {
-        meta_data: { error: 1, message: "Gagal memperbarui produk", status: 500 },
+        meta_data: {
+          error: 1,
+          message: "Gagal memperbarui produk",
+          status: 500,
+        },
       },
       {
         status: 500,
@@ -147,7 +175,11 @@ export async function DELETE(
   if (isNaN(id)) {
     return NextResponse.json(
       {
-        meta_data: { error: 1, message: "ID tidak valid", status: 400 },
+        meta_data: {
+          error: 1,
+          message: "ID tidak valid",
+          status: 400,
+        },
       },
       {
         status: 400,
@@ -161,7 +193,11 @@ export async function DELETE(
 
     return NextResponse.json(
       {
-        meta_data: { error: 0, message: "Produk dihapus", status: 200 },
+        meta_data: {
+          error: 0,
+          message: "Produk dihapus",
+          status: 200,
+        },
       },
       {
         status: 200,
@@ -171,7 +207,11 @@ export async function DELETE(
   } catch (error) {
     return NextResponse.json(
       {
-        meta_data: { error: 1, message: "Gagal menghapus produk", status: 500 },
+        meta_data: {
+          error: 1,
+          message: "Gagal menghapus produk",
+          status: 500,
+        },
       },
       {
         status: 500,
