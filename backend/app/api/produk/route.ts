@@ -22,9 +22,7 @@ export async function OPTIONS() {
 export async function GET() {
   try {
     const produkList = await prisma.produk.findMany({
-      include: {
-        petani: true,
-      },
+      include: { petani: true },
     });
 
     return NextResponse.json(
