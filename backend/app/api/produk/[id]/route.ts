@@ -4,20 +4,25 @@ import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
-// OPTIONS method (CORS preflight support)
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "http://localhost:3000",
+  "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
+// OPTIONS: CORS preflight support
 export async function OPTIONS() {
   return NextResponse.json({}, {
     status: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "http://localhost:3000",
-      "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    },
+    headers: CORS_HEADERS,
   });
 }
 
 // GET /api/produk/[id]
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const id = Number(params.id);
 
   if (isNaN(id)) {
@@ -28,7 +33,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       },
       {
         status: 400,
-        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+        headers: CORS_HEADERS,
       }
     );
   }
@@ -36,9 +41,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   try {
     const produk = await prisma.produk.findUnique({
       where: { id },
-      include: {
-        petani: true,
-      },
+      include: { petani: true },
     });
 
     if (!produk) {
@@ -49,7 +52,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
         },
         {
           status: 404,
-          headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+          headers: CORS_HEADERS,
         }
       );
     }
@@ -61,7 +64,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       },
       {
         status: 200,
-        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+        headers: CORS_HEADERS,
       }
     );
   } catch (error) {
@@ -72,14 +75,17 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       },
       {
         status: 500,
-        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+        headers: CORS_HEADERS,
       }
     );
   }
 }
 
 // PUT /api/produk/[id]
-export async function PUT(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PUT(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const id = Number(params.id);
 
   if (isNaN(id)) {
@@ -89,7 +95,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       },
       {
         status: 400,
-        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+        headers: CORS_HEADERS,
       }
     );
   }
@@ -115,7 +121,7 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       },
       {
         status: 200,
-        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+        headers: CORS_HEADERS,
       }
     );
   } catch (error) {
@@ -125,14 +131,17 @@ export async function PUT(request: NextRequest, { params }: { params: { id: stri
       },
       {
         status: 500,
-        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+        headers: CORS_HEADERS,
       }
     );
   }
 }
 
 // DELETE /api/produk/[id]
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   const id = Number(params.id);
 
   if (isNaN(id)) {
@@ -142,7 +151,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       },
       {
         status: 400,
-        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+        headers: CORS_HEADERS,
       }
     );
   }
@@ -156,7 +165,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       },
       {
         status: 200,
-        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+        headers: CORS_HEADERS,
       }
     );
   } catch (error) {
@@ -166,7 +175,7 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       },
       {
         status: 500,
-        headers: { "Access-Control-Allow-Origin": "http://localhost:3000" },
+        headers: CORS_HEADERS,
       }
     );
   }
