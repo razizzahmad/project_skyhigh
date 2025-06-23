@@ -1,4 +1,5 @@
-import { PrismaClient } from "@prisma/client"; 
+// app/api/petani/route.ts
+import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
@@ -21,9 +22,7 @@ export async function OPTIONS() {
 export async function GET() {
   try {
     const petaniList = await prisma.petani.findMany({
-      include: {
-        produk: true,
-      },
+      include: { produk: true },
     });
 
     return NextResponse.json(
@@ -93,6 +92,7 @@ export async function POST(request: NextRequest) {
           message: "Gagal menambahkan data",
           status: 500,
         },
+        data_petani: null,
       },
       {
         status: 500,
