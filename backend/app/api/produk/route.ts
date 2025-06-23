@@ -3,13 +3,14 @@ import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
+
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "http://localhost:3000",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
-// OPTIONS: CORS preflight
+// OPTIONS: CORS preflight request
 export async function OPTIONS() {
   return new Response(null, {
     status: 200,
@@ -17,7 +18,7 @@ export async function OPTIONS() {
   });
 }
 
-// GET: Ambil semua produk
+// GET: Ambil semua produk (termasuk relasi petani)
 export async function GET() {
   try {
     const produkList = await prisma.produk.findMany({
