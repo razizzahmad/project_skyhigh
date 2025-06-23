@@ -3,19 +3,25 @@ import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
 
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "http://localhost:3000",
+  "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
+// OPTIONS /api/petani/[id]
 export async function OPTIONS() {
   return NextResponse.json({}, {
     status: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "http://localhost:3000",
-      "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    },
+    headers: CORS_HEADERS,
   });
 }
 
 // GET /api/petani/[id]
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  req: Request,
+  { params }: { params: { id: string } }
+) {
   const id = parseInt(params.id);
 
   try {
@@ -33,18 +39,27 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
           },
           data_petani: null,
         },
-        { status: 404 }
+        {
+          status: 404,
+          headers: CORS_HEADERS,
+        }
       );
     }
 
-    return NextResponse.json({
-      meta_data: {
-        error: 0,
-        message: "Sukses mengambil data",
-        status: 200,
+    return NextResponse.json(
+      {
+        meta_data: {
+          error: 0,
+          message: "Sukses mengambil data",
+          status: 200,
+        },
+        data_petani: petani,
       },
-      data_petani: petani,
-    });
+      {
+        status: 200,
+        headers: CORS_HEADERS,
+      }
+    );
   } catch (error) {
     return NextResponse.json(
       {
@@ -55,7 +70,10 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
         },
         data_petani: null,
       },
-      { status: 500 }
+      {
+        status: 500,
+        headers: CORS_HEADERS,
+      }
     );
   }
 }
@@ -69,12 +87,16 @@ export async function PUT(
 
   if (isNaN(id)) {
     return NextResponse.json(
-      { meta_data: { error: 1, message: "ID tidak valid", status: 400 } },
+      {
+        meta_data: {
+          error: 1,
+          message: "ID tidak valid",
+          status: 400,
+        },
+      },
       {
         status: 400,
-        headers: {
-          "Access-Control-Allow-Origin": "http://localhost:3000",
-        },
+        headers: CORS_HEADERS,
       }
     );
   }
@@ -93,24 +115,30 @@ export async function PUT(
 
     return NextResponse.json(
       {
-        meta_data: { error: 0, message: "Petani diperbarui", status: 200 },
+        meta_data: {
+          error: 0,
+          message: "Petani diperbarui",
+          status: 200,
+        },
         data_petani: updatedPetani,
       },
       {
         status: 200,
-        headers: {
-          "Access-Control-Allow-Origin": "http://localhost:3000",
-        },
+        headers: CORS_HEADERS,
       }
     );
   } catch (error) {
     return NextResponse.json(
-      { meta_data: { error: 1, message: "Gagal memperbarui data", status: 500 } },
+      {
+        meta_data: {
+          error: 1,
+          message: "Gagal memperbarui data",
+          status: 500,
+        },
+      },
       {
         status: 500,
-        headers: {
-          "Access-Control-Allow-Origin": "http://localhost:3000",
-        },
+        headers: CORS_HEADERS,
       }
     );
   }
@@ -125,21 +153,51 @@ export async function DELETE(
 
   if (isNaN(id)) {
     return NextResponse.json(
-      { meta_data: { error: 1, message: "ID tidak valid", status: 400 } },
-      { status: 400 }
+      {
+        meta_data: {
+          error: 1,
+          message: "ID tidak valid",
+          status: 400,
+        },
+      },
+      {
+        status: 400,
+        headers: CORS_HEADERS,
+      }
     );
   }
 
   try {
-    await prisma.petani.delete({ where: { id } });
-
-    return NextResponse.json({
-      meta_data: { error: 0, message: "Petani berhasil dihapus", status: 200 },
+    await prisma.petani.delete({
+      where: { id },
     });
+
+    return NextResponse.json(
+      {
+        meta_data: {
+          error: 0,
+          message: "Petani berhasil dihapus",
+          status: 200,
+        },
+      },
+      {
+        status: 200,
+        headers: CORS_HEADERS,
+      }
+    );
   } catch (error) {
     return NextResponse.json(
-      { meta_data: { error: 1, message: "Gagal menghapus petani", status: 500 } },
-      { status: 500 }
+      {
+        meta_data: {
+          error: 1,
+          message: "Gagal menghapus petani",
+          status: 500,
+        },
+      },
+      {
+        status: 500,
+        headers: CORS_HEADERS,
+      }
     );
   }
 }
