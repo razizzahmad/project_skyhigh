@@ -1,14 +1,15 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client"; 
 import { NextRequest, NextResponse } from "next/server";
 
 const prisma = new PrismaClient();
+
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "http://localhost:3000",
   "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
-// Preflight request handler
+// OPTIONS: Preflight request handler
 export async function OPTIONS() {
   return new Response(null, {
     status: 200,
@@ -16,7 +17,7 @@ export async function OPTIONS() {
   });
 }
 
-// GET: Ambil semua petani
+// GET: Ambil semua data petani beserta produk
 export async function GET() {
   try {
     const petaniList = await prisma.petani.findMany({
@@ -57,7 +58,7 @@ export async function GET() {
   }
 }
 
-// POST: Tambah data petani
+// POST: Tambah data petani baru
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
