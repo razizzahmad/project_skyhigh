@@ -1,3 +1,4 @@
+// app/api/petani/[id]/route.ts
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -5,7 +6,7 @@ const prisma = new PrismaClient();
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "http://localhost:3000",
-  "Access-Control-Allow-Methods": "GET,POST,PUT,DELETE,OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
@@ -23,6 +24,23 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   const id = parseInt(params.id);
+
+  if (isNaN(id)) {
+    return NextResponse.json(
+      {
+        meta_data: {
+          error: 1,
+          message: "ID tidak valid",
+          status: 400,
+        },
+        data_petani: null,
+      },
+      {
+        status: 400,
+        headers: CORS_HEADERS,
+      }
+    );
+  }
 
   try {
     const petani = await prisma.petani.findUnique({
@@ -81,9 +99,9 @@ export async function GET(
 // PUT /api/petani/[id]
 export async function PUT(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
-  const id = Number(context?.params?.id);
+  const id = Number(params.id);
 
   if (isNaN(id)) {
     return NextResponse.json(
@@ -135,6 +153,7 @@ export async function PUT(
           message: "Gagal memperbarui data",
           status: 500,
         },
+        data_petani: null,
       },
       {
         status: 500,
@@ -147,9 +166,9 @@ export async function PUT(
 // DELETE /api/petani/[id]
 export async function DELETE(
   request: NextRequest,
-  context: { params: { id: string } }
+  { params }: { params: { id: string } }
 ) {
-  const id = Number(context?.params?.id);
+  const id = Number(params.id);
 
   if (isNaN(id)) {
     return NextResponse.json(
