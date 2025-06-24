@@ -1,4 +1,5 @@
 // app/api/petani/route.ts
+
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -39,7 +40,7 @@ export async function GET() {
         headers: CORS_HEADERS,
       }
     );
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       {
         meta_data: {
@@ -84,7 +85,7 @@ export async function POST(request: NextRequest) {
         headers: CORS_HEADERS,
       }
     );
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       {
         meta_data: {
