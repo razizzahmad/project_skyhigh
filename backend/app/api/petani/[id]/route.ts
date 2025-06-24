@@ -1,4 +1,5 @@
 // app/api/petani/[id]/route.ts
+
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -23,7 +24,7 @@ export async function GET(
   req: Request,
   { params }: { params: { id: string } }
 ) {
-  const id = parseInt(params.id);
+  const id = Number(params.id);
 
   if (isNaN(id)) {
     return NextResponse.json(
@@ -78,7 +79,7 @@ export async function GET(
         headers: CORS_HEADERS,
       }
     );
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       {
         meta_data: {
@@ -145,7 +146,7 @@ export async function PUT(
         headers: CORS_HEADERS,
       }
     );
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       {
         meta_data: {
@@ -204,7 +205,7 @@ export async function DELETE(
         headers: CORS_HEADERS,
       }
     );
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       {
         meta_data: {
