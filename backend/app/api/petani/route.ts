@@ -1,5 +1,4 @@
-// app/api/petani/[id]/route.ts
-
+// app/api/petani/route.ts
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -7,11 +6,11 @@ const prisma = new PrismaClient();
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "http://localhost:3000",
-  "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
 };
 
-// OPTIONS /api/petani/[id]
+// OPTIONS
 export async function OPTIONS() {
   return NextResponse.json({}, {
     status: 200,
@@ -19,112 +18,45 @@ export async function OPTIONS() {
   });
 }
 
-// GET /api/petani/[id]
-export async function GET(
-  req: Request,
-  { params }: { params: { id: string } }
-) {
-  const id = Number(params.id);
-
-  if (isNaN(id)) {
-    return NextResponse.json(
-      {
-        meta_data: {
-          error: 1,
-          message: "ID tidak valid",
-          status: 400,
-        },
-        data_petani: null,
-      },
-      {
-        status: 400,
-        headers: CORS_HEADERS,
-      }
-    );
-  }
-
+// GET: Ambil semua petani
+export async function GET() {
   try {
-    const petani = await prisma.petani.findUnique({
-      where: { id },
+    const petaniList = await prisma.petani.findMany({
+      include: { produk: true },
     });
 
-    if (!petani) {
-      return NextResponse.json(
-        {
-          meta_data: {
-            error: 1,
-            message: "Petani tidak ditemukan",
-            status: 404,
-          },
-          data_petani: null,
-        },
-        {
-          status: 404,
-          headers: CORS_HEADERS,
-        }
-      );
-    }
-
-    return NextResponse.json(
-      {
-        meta_data: {
-          error: 0,
-          message: "Sukses mengambil data",
-          status: 200,
-        },
-        data_petani: petani,
-      },
-      {
+    return NextResponse.json({
+      meta_data: {
+        error: 0,
+        message: "Data petani berhasil diambil",
         status: 200,
-        headers: CORS_HEADERS,
-      }
-    );
-  } catch {
-    return NextResponse.json(
-      {
-        meta_data: {
-          error: 1,
-          message: "Gagal mengambil data",
-          status: 500,
-        },
-        data_petani: null,
       },
-      {
+      data_petani: petaniList,
+    }, {
+      status: 200,
+      headers: CORS_HEADERS,
+    });
+  } catch {
+    return NextResponse.json({
+      meta_data: {
+        error: 1,
+        message: "Gagal mengambil data",
         status: 500,
-        headers: CORS_HEADERS,
-      }
-    );
+      },
+      data_petani: [],
+    }, {
+      status: 500,
+      headers: CORS_HEADERS,
+    });
   }
 }
 
-// PUT /api/petani/[id]
-export async function PUT(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const id = Number(params.id);
-
-  if (isNaN(id)) {
-    return NextResponse.json(
-      {
-        meta_data: {
-          error: 1,
-          message: "ID tidak valid",
-          status: 400,
-        },
-      },
-      {
-        status: 400,
-        headers: CORS_HEADERS,
-      }
-    );
-  }
-
+// POST: Tambah petani baru
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
-    const updatedPetani = await prisma.petani.update({
-      where: { id },
+    const newPetani = await prisma.petani.create({
       data: {
         nama: body.nama,
         kontak: body.kontak,
@@ -132,92 +64,28 @@ export async function PUT(
       },
     });
 
-    return NextResponse.json(
-      {
-        meta_data: {
-          error: 0,
-          message: "Petani diperbarui",
-          status: 200,
-        },
-        data_petani: updatedPetani,
+    return NextResponse.json({
+      meta_data: {
+        error: 0,
+        message: "Petani berhasil ditambahkan",
+        status: 201,
       },
-      {
-        status: 200,
-        headers: CORS_HEADERS,
-      }
-    );
-  } catch {
-    return NextResponse.json(
-      {
-        meta_data: {
-          error: 1,
-          message: "Gagal memperbarui data",
-          status: 500,
-        },
-        data_petani: null,
-      },
-      {
-        status: 500,
-        headers: CORS_HEADERS,
-      }
-    );
-  }
-}
-
-// DELETE /api/petani/[id]
-export async function DELETE(
-  request: NextRequest,
-  { params }: { params: { id: string } }
-) {
-  const id = Number(params.id);
-
-  if (isNaN(id)) {
-    return NextResponse.json(
-      {
-        meta_data: {
-          error: 1,
-          message: "ID tidak valid",
-          status: 400,
-        },
-      },
-      {
-        status: 400,
-        headers: CORS_HEADERS,
-      }
-    );
-  }
-
-  try {
-    await prisma.petani.delete({
-      where: { id },
+      data_petani: newPetani,
+    }, {
+      status: 201,
+      headers: CORS_HEADERS,
     });
-
-    return NextResponse.json(
-      {
-        meta_data: {
-          error: 0,
-          message: "Petani berhasil dihapus",
-          status: 200,
-        },
-      },
-      {
-        status: 200,
-        headers: CORS_HEADERS,
-      }
-    );
   } catch {
-    return NextResponse.json(
-      {
-        meta_data: {
-          error: 1,
-          message: "Gagal menghapus petani",
-          status: 500,
-        },
-      },
-      {
+    return NextResponse.json({
+      meta_data: {
+        error: 1,
+        message: "Gagal menambahkan petani",
         status: 500,
-        headers: CORS_HEADERS,
-      }
-    );
+      },
+      data_petani: null,
+    }, {
+      status: 500,
+      headers: CORS_HEADERS,
+    });
   }
 }
