@@ -1,4 +1,5 @@
 // app/api/produk/[id]/route.ts
+
 import { PrismaClient } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -79,7 +80,7 @@ export async function GET(
         headers: CORS_HEADERS,
       }
     );
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       {
         meta_data: {
@@ -148,7 +149,7 @@ export async function PUT(
         headers: CORS_HEADERS,
       }
     );
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       {
         meta_data: {
@@ -156,6 +157,7 @@ export async function PUT(
           message: "Gagal memperbarui produk",
           status: 500,
         },
+        data_produk: null,
       },
       {
         status: 500,
@@ -204,7 +206,7 @@ export async function DELETE(
         headers: CORS_HEADERS,
       }
     );
-  } catch (error) {
+  } catch {
     return NextResponse.json(
       {
         meta_data: {
